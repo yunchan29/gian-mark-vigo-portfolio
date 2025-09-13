@@ -445,8 +445,9 @@ export default function Home() {
                 <X className="h-5 w-5 sm:h-6 sm:w-6" />
               </button>
 
+              {/* PDF Preview with built-in browser controls */}
               <iframe
-                src="/Gian_Mark_Vigo_Resume_Latest.pdf"
+                src="/Gian_Mark_Vigo_Resume_Latest.pdf#toolbar=1&navpanes=0&scrollbar=1"
                 className="w-full h-full rounded-md"
                 title="Resume Preview"
               />
