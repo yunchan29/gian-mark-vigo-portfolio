@@ -74,8 +74,7 @@ export default function Home() {
 
   const nextScreenshot = () =>
     setScreenshotIndex(
-      (prev) =>
-        (prev + 1) % (projects[projectIndex].images?.length || 1)
+      (prev) => (prev + 1) % (projects[projectIndex].images?.length || 1)
     );
   const prevScreenshot = () =>
     setScreenshotIndex(
@@ -85,19 +84,19 @@ export default function Home() {
     );
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-[#1e1e1e] text-[#d4d4d4] font-mono p-6 space-y-6">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-[#1e1e1e] text-[#d4d4d4] font-mono px-4 sm:px-6 py-6 space-y-6">
       {/* Top Terminal (Intro) */}
       <div className="w-full max-w-4xl rounded-lg border border-white/20 
           bg-white/10 backdrop-blur-md shadow-xl shadow-black/30">
-        <div className="flex items-center space-x-2 border-b border-white/20 px-4 py-2 bg-white/10 backdrop-blur-sm">
-          <div className="h-3 w-3 rounded-full bg-red-500"></div>
-          <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
-          <div className="h-3 w-3 rounded-full bg-green-500"></div>
-          <span className="ml-3 text-sm text-[#9cdcfe]">~/gian-portfolio</span>
+        <div className="flex items-center space-x-2 border-b border-white/20 px-4 py-2 bg-white/10 backdrop-blur-sm text-xs sm:text-sm">
+          <div className="h-2.5 w-2.5 rounded-full bg-red-500"></div>
+          <div className="h-2.5 w-2.5 rounded-full bg-yellow-500"></div>
+          <div className="h-2.5 w-2.5 rounded-full bg-green-500"></div>
+          <span className="ml-3 text-[#9cdcfe]">~/gian-portfolio</span>
         </div>
 
-        <div className="p-6 space-y-4">
-          <div>
+        <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
+          <div className="text-sm sm:text-base">
             <span className="text-[#4ec9b0]">gian@portfolio:~$ </span>
             <TypeAnimation
               sequence={["whoami", 1200, "cat about.txt", 2000]}
@@ -107,7 +106,7 @@ export default function Home() {
             />
           </div>
 
-          <div className="ml-4 space-y-2">
+          <div className="ml-2 sm:ml-4 space-y-2 text-xs sm:text-sm">
             <p>
               Hi, I’m <span className="text-[#dcdcaa]">Gian Mark Vigo</span> 👨‍💻
             </p>
@@ -125,15 +124,15 @@ export default function Home() {
 
       {/* Bottom Terminal (Tabbed) */}
       <div className="w-full max-w-4xl rounded-lg border border-white/20 
-          bg-white/10 backdrop-blur-md shadow-xl shadow-black/30 h-[28rem] flex flex-col">
+          bg-white/10 backdrop-blur-md shadow-xl shadow-black/30 h-auto md:h-[28rem] flex flex-col">
         {/* Tabs */}
-        <div className="flex items-center border-b border-white/20 bg-white/10 backdrop-blur-sm text-sm">
+        <div className="flex items-center overflow-x-auto border-b border-white/20 bg-white/10 backdrop-blur-sm text-xs sm:text-sm">
           {(["about", "projects", "experience", "contact"] as const).map(
             (tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 ${
+                className={`px-3 sm:px-4 py-2 whitespace-nowrap ${
                   activeTab === tab
                     ? "bg-white/5 text-[#9cdcfe]"
                     : "text-[#808080]"
@@ -146,12 +145,14 @@ export default function Home() {
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-4 overflow-y-auto text-sm sm:text-base">
+        <div className="p-4 sm:p-6 space-y-4 overflow-y-auto text-xs sm:text-sm md:text-base">
           {/* About Tab */}
           {activeTab === "about" && (
             <div>
-              <span className="text-[#4ec9b0]">gian@portfolio:~$ cat about.txt</span>
-              <p className="ml-4 mt-2">
+              <span className="text-[#4ec9b0]">
+                gian@portfolio:~$ cat about.txt
+              </span>
+              <p className="ml-2 sm:ml-4 mt-2">
                 Passionate developer with experience in building full-stack
                 applications, specializing in clean UI/UX and modern web stacks.
               </p>
@@ -164,21 +165,21 @@ export default function Home() {
               <span className="text-[#4ec9b0]">
                 gian@portfolio:~$ cat projects.txt
               </span>
-              <div className="ml-4 mt-4 border border-white/20 bg-white/5 
-                   backdrop-blur-md p-4 rounded-lg relative overflow-hidden shadow-lg">
-                <h3 className="text-[#dcdcaa] font-bold">
+              <div className="ml-2 sm:ml-4 mt-4 border border-white/20 bg-white/5 
+                   backdrop-blur-md p-3 sm:p-4 rounded-lg relative overflow-hidden shadow-lg">
+                <h3 className="text-[#dcdcaa] font-bold text-sm sm:text-base md:text-lg">
                   {projects[projectIndex].title}
                 </h3>
-                <p className="mt-2 whitespace-pre-line">
+                <p className="mt-2 whitespace-pre-line text-xs sm:text-sm">
                   {projects[projectIndex].description}
                 </p>
 
-                <div className="flex space-x-6 mt-3">
+                <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0 mt-3">
                   {projects[projectIndex].link && (
                     <Link
                       href={projects[projectIndex].link}
                       target="_blank"
-                      className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition"
+                      className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition text-xs sm:text-sm"
                     >
                       <Github className="h-4 w-4" />
                       <span>View on GitHub</span>
@@ -189,7 +190,7 @@ export default function Home() {
                     <Link
                       href={projects[projectIndex].site}
                       target="_blank"
-                      className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition"
+                      className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition text-xs sm:text-sm"
                     >
                       <Globe className="h-4 w-4" />
                       <span>Live Site</span>
@@ -201,7 +202,7 @@ export default function Home() {
                       setIsModalOpen(true);
                       setScreenshotIndex(0);
                     }}
-                    className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition"
+                    className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition text-xs sm:text-sm"
                   >
                     <ImageIcon className="h-4 w-4" />
                     <span>Preview</span>
@@ -209,7 +210,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Carousel Controls beside card */}
+              {/* Carousel Controls */}
               <div className="flex justify-between items-center mt-4">
                 <button
                   onClick={prevProject}
@@ -234,18 +235,18 @@ export default function Home() {
                 gian@portfolio:~$ cat experience.txt
               </span>
               <div className="mt-4">
-                <h2 className="text-[#4ec9b0] font-bold text-lg">
+                <h2 className="text-[#4ec9b0] font-bold text-sm sm:text-base md:text-lg">
                   WORK EXPERIENCE
                 </h2>
 
-                <div className="mt-2 ml-4">
-                  <h3 className="text-[#dcdcaa] font-semibold">
+                <div className="mt-2 ml-2 sm:ml-4">
+                  <h3 className="text-[#dcdcaa] font-semibold text-xs sm:text-sm md:text-base">
                     IT Support Intern
                   </h3>
-                  <p className="text-gray-400 italic text-sm">
+                  <p className="text-gray-400 italic text-xs sm:text-sm">
                     ICT Department – Calamba City Hall (Nov 2024 – Apr 2025)
                   </p>
-                  <ul className="mt-2 list-disc ml-5 text-gray-300">
+                  <ul className="mt-2 list-disc ml-4 sm:ml-5 text-gray-300 text-xs sm:text-sm">
                     <li>
                       Provided technical support, software installation, and
                       network maintenance.
@@ -266,11 +267,11 @@ export default function Home() {
               <span className="text-[#4ec9b0]">
                 gian@portfolio:~$ cat contact.txt
               </span>
-              <div className="ml-4 mt-2 flex flex-col space-y-2">
+              <div className="ml-2 sm:ml-4 mt-2 flex flex-col space-y-2">
                 <Link
                   href="https://github.com/yunchan29"
                   target="_blank"
-                  className="flex items-center space-x-2 hover:text-[#9cdcfe] transition"
+                  className="flex items-center space-x-2 hover:text-[#9cdcfe] transition text-xs sm:text-sm"
                 >
                   <Github className="h-4 w-4" />
                   <span>GitHub</span>
@@ -278,14 +279,14 @@ export default function Home() {
                 <Link
                   href="https://www.linkedin.com/in/gian-mark-vigo-99493b294"
                   target="_blank"
-                  className="flex items-center space-x-2 hover:text-[#9cdcfe] transition"
+                  className="flex items-center space-x-2 hover:text-[#9cdcfe] transition text-xs sm:text-sm"
                 >
                   <Linkedin className="h-4 w-4" />
                   <span>LinkedIn</span>
                 </Link>
                 <Link
                   href="mailto:vigogianmark@gmail.com"
-                  className="flex items-center space-x-2 hover:text-[#9cdcfe] transition"
+                  className="flex items-center space-x-2 hover:text-[#9cdcfe] transition text-xs sm:text-sm"
                 >
                   <Mail className="h-4 w-4" />
                   <span>Email</span>
@@ -298,13 +299,13 @@ export default function Home() {
 
       {/* Modal for Screenshot Preview */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-          <div className="relative w-[90%] max-w-3xl bg-[#1e1e1e] border border-white/20 rounded-lg p-4">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-2">
+          <div className="relative w-full max-w-3xl bg-[#1e1e1e] border border-white/20 rounded-lg p-3 sm:p-4">
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-3 right-3 text-gray-300 hover:text-white"
+              className="absolute top-2 right-2 sm:top-3 sm:right-3 text-gray-300 hover:text-white"
             >
-              <X className="h-6 w-6" />
+              <X className="h-5 w-5 sm:h-6 sm:w-6" />
             </button>
 
             <div className="flex flex-col items-center">
@@ -314,7 +315,7 @@ export default function Home() {
                   "/placeholder.png"
                 }
                 alt="Project screenshot"
-                className="rounded-md max-h-[70vh] object-contain"
+                className="rounded-md max-h-[60vh] sm:max-h-[70vh] object-contain"
               />
               <div className="flex justify-between w-full mt-4">
                 <button
