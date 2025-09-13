@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { TypeAnimation } from "react-type-animation";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Github,
   Linkedin,
@@ -12,6 +13,7 @@ import {
   Globe,
   X,
   Image as ImageIcon,
+  FileDown,
 } from "lucide-react";
 
 const projects = [
@@ -63,7 +65,6 @@ export default function Home() {
     "about" | "projects" | "experience" | "contact"
   >("about");
   const [projectIndex, setProjectIndex] = useState(0);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [screenshotIndex, setScreenshotIndex] = useState(0);
 
@@ -86,8 +87,13 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-[#1e1e1e] text-[#d4d4d4] font-mono px-4 sm:px-6 py-6 space-y-6">
       {/* Top Terminal (Intro) */}
-      <div className="w-full max-w-4xl rounded-lg border border-white/20 
-          bg-white/10 backdrop-blur-md shadow-xl shadow-black/30">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-4xl rounded-lg border border-white/20 
+          bg-white/10 backdrop-blur-md shadow-xl shadow-black/30"
+      >
         <div className="flex items-center space-x-2 border-b border-white/20 px-4 py-2 bg-white/10 backdrop-blur-sm text-xs sm:text-sm">
           <div className="h-2.5 w-2.5 rounded-full bg-red-500"></div>
           <div className="h-2.5 w-2.5 rounded-full bg-yellow-500"></div>
@@ -120,16 +126,23 @@ export default function Home() {
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Bottom Terminal (Tabbed) */}
-      <div className="w-full max-w-4xl rounded-lg border border-white/20 
-          bg-white/10 backdrop-blur-md shadow-xl shadow-black/30 h-auto md:h-[28rem] flex flex-col">
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-4xl rounded-lg border border-white/20 
+          bg-white/10 backdrop-blur-md shadow-xl shadow-black/30 h-auto md:h-[28rem] flex flex-col"
+      >
         {/* Tabs */}
         <div className="flex items-center overflow-x-auto border-b border-white/20 bg-white/10 backdrop-blur-sm text-xs sm:text-sm">
           {(["about", "projects", "experience", "contact"] as const).map(
             (tab) => (
-              <button
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.05, color: "#9cdcfe" }}
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`px-3 sm:px-4 py-2 whitespace-nowrap ${
@@ -139,202 +152,264 @@ export default function Home() {
                 }`}
               >
                 {tab}.txt
-              </button>
+              </motion.button>
             )
           )}
         </div>
 
         {/* Content */}
         <div className="p-4 sm:p-6 space-y-4 overflow-y-auto text-xs sm:text-sm md:text-base">
-          {/* About Tab */}
-          {activeTab === "about" && (
-            <div>
-              <span className="text-[#4ec9b0]">
-                gian@portfolio:~$ cat about.txt
-              </span>
-              <p className="ml-2 sm:ml-4 mt-2">
-                Passionate developer with experience in building full-stack
-                applications, specializing in clean UI/UX and modern web stacks.
-              </p>
-            </div>
-          )}
-
-          {/* Projects Tab */}
-          {activeTab === "projects" && (
-            <div>
-              <span className="text-[#4ec9b0]">
-                gian@portfolio:~$ cat projects.txt
-              </span>
-              <div className="ml-2 sm:ml-4 mt-4 border border-white/20 bg-white/5 
-                   backdrop-blur-md p-3 sm:p-4 rounded-lg relative overflow-hidden shadow-lg">
-                <h3 className="text-[#dcdcaa] font-bold text-sm sm:text-base md:text-lg">
-                  {projects[projectIndex].title}
-                </h3>
-                <p className="mt-2 whitespace-pre-line text-xs sm:text-sm">
-                  {projects[projectIndex].description}
+          <AnimatePresence mode="wait">
+            {/* About Tab */}
+            {activeTab === "about" && (
+              <motion.div
+                key="about"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+              >
+                <span className="text-[#4ec9b0]">
+                  gian@portfolio:~$ cat about.txt
+                </span>
+                <p className="ml-2 sm:ml-4 mt-2">
+                  Passionate developer with experience in building full-stack
+                  applications, specializing in clean UI/UX and modern web
+                  stacks.
                 </p>
 
-                <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0 mt-3">
-                  {projects[projectIndex].link && (
-                    <Link
-                      href={projects[projectIndex].link}
-                      target="_blank"
-                      className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition text-xs sm:text-sm"
-                    >
-                      <Github className="h-4 w-4" />
-                      <span>View on GitHub</span>
-                    </Link>
-                  )}
-
-                  {projects[projectIndex].site && (
-                    <Link
-                      href={projects[projectIndex].site}
-                      target="_blank"
-                      className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition text-xs sm:text-sm"
-                    >
-                      <Globe className="h-4 w-4" />
-                      <span>Live Site</span>
-                    </Link>
-                  )}
-
-                  <button
-                    onClick={() => {
-                      setIsModalOpen(true);
-                      setScreenshotIndex(0);
-                    }}
-                    className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition text-xs sm:text-sm"
-                  >
-                    <ImageIcon className="h-4 w-4" />
-                    <span>Preview</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Carousel Controls */}
-              <div className="flex justify-between items-center mt-4">
-                <button
-                  onClick={prevProject}
-                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff] backdrop-blur-sm"
+                {/* Resume Download Button */}
+                <motion.a
+                  href="/Gian_Mark_Vigo_Resume_Latest.pdf"
+                  download
+                  whileHover={{ scale: 1.05, boxShadow: "0px 0px 8px #4fc1ff" }}
+                  whileTap={{ scale: 0.95 }}
+                  className="mt-4 inline-flex items-center space-x-2 bg-[#4ec9b0]/20 text-[#4ec9b0] px-4 py-2 rounded-md border border-[#4ec9b0]/50 hover:bg-[#4ec9b0]/30 transition"
                 >
-                  <ChevronLeft />
-                </button>
-                <button
-                  onClick={nextProject}
-                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff] backdrop-blur-sm"
-                >
-                  <ChevronRight />
-                </button>
-              </div>
-            </div>
-          )}
+                  <FileDown className="h-4 w-4" />
+                  <span>Download Resume</span>
+                </motion.a>
+              </motion.div>
+            )}
 
-          {/* Experience Tab */}
-          {activeTab === "experience" && (
-            <div>
-              <span className="text-[#4ec9b0]">
-                gian@portfolio:~$ cat experience.txt
-              </span>
-              <div className="mt-4">
-                <h2 className="text-[#4ec9b0] font-bold text-sm sm:text-base md:text-lg">
-                  WORK EXPERIENCE
-                </h2>
-
-                <div className="mt-2 ml-2 sm:ml-4">
-                  <h3 className="text-[#dcdcaa] font-semibold text-xs sm:text-sm md:text-base">
-                    IT Support Intern
+            {/* Projects Tab */}
+            {activeTab === "projects" && (
+              <motion.div
+                key="projects"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+              >
+                <span className="text-[#4ec9b0]">
+                  gian@portfolio:~$ cat projects.txt
+                </span>
+                <div className="ml-2 sm:ml-4 mt-4 border border-white/20 bg-white/5 
+                   backdrop-blur-md p-3 sm:p-4 rounded-lg relative overflow-hidden shadow-lg">
+                  <h3 className="text-[#dcdcaa] font-bold text-sm sm:text-base md:text-lg">
+                    {projects[projectIndex].title}
                   </h3>
-                  <p className="text-gray-400 italic text-xs sm:text-sm">
-                    ICT Department – Calamba City Hall (Nov 2024 – Apr 2025)
+                  <p className="mt-2 whitespace-pre-line text-xs sm:text-sm">
+                    {projects[projectIndex].description}
                   </p>
-                  <ul className="mt-2 list-disc ml-4 sm:ml-5 text-gray-300 text-xs sm:text-sm">
-                    <li>
-                      Provided technical support, software installation, and
-                      network maintenance.
-                    </li>
-                    <li>
-                      Assisted in daily IT operations, troubleshooting multiple
-                      technical issues weekly.
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          )}
 
-          {/* Contact Tab */}
-          {activeTab === "contact" && (
-            <div>
-              <span className="text-[#4ec9b0]">
-                gian@portfolio:~$ cat contact.txt
-              </span>
-              <div className="ml-2 sm:ml-4 mt-2 flex flex-col space-y-2">
-                <Link
-                  href="https://github.com/yunchan29"
-                  target="_blank"
-                  className="flex items-center space-x-2 hover:text-[#9cdcfe] transition text-xs sm:text-sm"
-                >
-                  <Github className="h-4 w-4" />
-                  <span>GitHub</span>
-                </Link>
-                <Link
-                  href="https://www.linkedin.com/in/gian-mark-vigo-99493b294"
-                  target="_blank"
-                  className="flex items-center space-x-2 hover:text-[#9cdcfe] transition text-xs sm:text-sm"
-                >
-                  <Linkedin className="h-4 w-4" />
-                  <span>LinkedIn</span>
-                </Link>
-                <Link
-                  href="mailto:vigogianmark@gmail.com"
-                  className="flex items-center space-x-2 hover:text-[#9cdcfe] transition text-xs sm:text-sm"
-                >
-                  <Mail className="h-4 w-4" />
-                  <span>Email</span>
-                </Link>
-              </div>
-            </div>
-          )}
+                  <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0 mt-3">
+                    {projects[projectIndex].link && (
+                      <Link
+                        href={projects[projectIndex].link}
+                        target="_blank"
+                        className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition text-xs sm:text-sm"
+                      >
+                        <Github className="h-4 w-4" />
+                        <span>View on GitHub</span>
+                      </Link>
+                    )}
+
+                    {projects[projectIndex].site && (
+                      <Link
+                        href={projects[projectIndex].site}
+                        target="_blank"
+                        className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition text-xs sm:text-sm"
+                      >
+                        <Globe className="h-4 w-4" />
+                        <span>Live Site</span>
+                      </Link>
+                    )}
+
+                    <motion.button
+                      whileTap={{ scale: 0.9 }}
+                      whileHover={{ scale: 1.05, color: "#9cdcfe" }}
+                      onClick={() => {
+                        setIsModalOpen(true);
+                        setScreenshotIndex(0);
+                      }}
+                      className="flex items-center space-x-2 text-[#4fc1ff] transition text-xs sm:text-sm"
+                    >
+                      <ImageIcon className="h-4 w-4" />
+                      <span>Preview</span>
+                    </motion.button>
+                  </div>
+                </div>
+
+                {/* Carousel Controls */}
+                <div className="flex justify-between items-center mt-4">
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    whileHover={{ scale: 1.05 }}
+                    onClick={prevProject}
+                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff] backdrop-blur-sm"
+                  >
+                    <ChevronLeft />
+                  </motion.button>
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    whileHover={{ scale: 1.05 }}
+                    onClick={nextProject}
+                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff] backdrop-blur-sm"
+                  >
+                    <ChevronRight />
+                  </motion.button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Experience Tab */}
+            {activeTab === "experience" && (
+              <motion.div
+                key="experience"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+              >
+                <span className="text-[#4ec9b0]">
+                  gian@portfolio:~$ cat experience.txt
+                </span>
+                <div className="mt-4">
+                  <h2 className="text-[#4ec9b0] font-bold text-sm sm:text-base md:text-lg">
+                    WORK EXPERIENCE
+                  </h2>
+
+                  <div className="mt-2 ml-2 sm:ml-4">
+                    <h3 className="text-[#dcdcaa] font-semibold text-xs sm:text-sm md:text-base">
+                      IT Support Intern
+                    </h3>
+                    <p className="text-gray-400 italic text-xs sm:text-sm">
+                      ICT Department – Calamba City Hall (Nov 2024 – Apr 2025)
+                    </p>
+                    <ul className="mt-2 list-disc ml-4 sm:ml-5 text-gray-300 text-xs sm:text-sm">
+                      <li>
+                        Provided technical support, software installation, and
+                        network maintenance.
+                      </li>
+                      <li>
+                        Assisted in daily IT operations, troubleshooting multiple
+                        technical issues weekly.
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Contact Tab */}
+            {activeTab === "contact" && (
+              <motion.div
+                key="contact"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+              >
+                <span className="text-[#4ec9b0]">
+                  gian@portfolio:~$ cat contact.txt
+                </span>
+                <div className="ml-2 sm:ml-4 mt-2 flex flex-col space-y-2">
+                  <Link
+                    href="https://github.com/yunchan29"
+                    target="_blank"
+                    className="flex items-center space-x-2 hover:text-[#9cdcfe] transition text-xs sm:text-sm"
+                  >
+                    <Github className="h-4 w-4" />
+                    <span>GitHub</span>
+                  </Link>
+                  <Link
+                    href="https://www.linkedin.com/in/gian-mark-vigo-99493b294"
+                    target="_blank"
+                    className="flex items-center space-x-2 hover:text-[#9cdcfe] transition text-xs sm:text-sm"
+                  >
+                    <Linkedin className="h-4 w-4" />
+                    <span>LinkedIn</span>
+                  </Link>
+                  <Link
+                    href="mailto:vigogianmark@gmail.com"
+                    className="flex items-center space-x-2 hover:text-[#9cdcfe] transition text-xs sm:text-sm"
+                  >
+                    <Mail className="h-4 w-4" />
+                    <span>Email</span>
+                  </Link>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </div>
+      </motion.div>
 
       {/* Modal for Screenshot Preview */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-2">
-          <div className="relative w-full max-w-3xl bg-[#1e1e1e] border border-white/20 rounded-lg p-3 sm:p-4">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-2 right-2 sm:top-3 sm:right-3 text-gray-300 hover:text-white"
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-2"
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="relative w-full max-w-3xl bg-[#1e1e1e] border border-white/20 rounded-lg p-3 sm:p-4"
             >
-              <X className="h-5 w-5 sm:h-6 sm:w-6" />
-            </button>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="absolute top-2 right-2 sm:top-3 sm:right-3 text-gray-300 hover:text-white"
+              >
+                <X className="h-5 w-5 sm:h-6 sm:w-6" />
+              </button>
 
-            <div className="flex flex-col items-center">
-              <img
-                src={
-                  projects[projectIndex].images?.[screenshotIndex] ||
-                  "/placeholder.png"
-                }
-                alt="Project screenshot"
-                className="rounded-md max-h-[60vh] sm:max-h-[70vh] object-contain"
-              />
-              <div className="flex justify-between w-full mt-4">
-                <button
-                  onClick={prevScreenshot}
-                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff]"
-                >
-                  <ChevronLeft />
-                </button>
-                <button
-                  onClick={nextScreenshot}
-                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff]"
-                >
-                  <ChevronRight />
-                </button>
+              <div className="flex flex-col items-center">
+                <img
+                  src={
+                    projects[projectIndex].images?.[screenshotIndex] ||
+                    "/placeholder.png"
+                  }
+                  alt="Project screenshot"
+                  className="rounded-md max-h-[60vh] sm:max-h-[70vh] object-contain"
+                />
+                <div className="flex justify-between w-full mt-4">
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    whileHover={{ scale: 1.05 }}
+                    onClick={prevScreenshot}
+                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff]"
+                  >
+                    <ChevronLeft />
+                  </motion.button>
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    whileHover={{ scale: 1.05 }}
+                    onClick={nextScreenshot}
+                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff]"
+                  >
+                    <ChevronRight />
+                  </motion.button>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
