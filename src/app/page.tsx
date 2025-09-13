@@ -66,6 +66,7 @@ export default function Home() {
   >("about");
   const [projectIndex, setProjectIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isResumeOpen, setIsResumeOpen] = useState(false);
   const [screenshotIndex, setScreenshotIndex] = useState(0);
 
   const nextProject = () =>
@@ -178,17 +179,29 @@ export default function Home() {
                   stacks.
                 </p>
 
-                {/* Resume Download Button */}
-                <motion.a
-                  href="/Gian_Mark_Vigo_Resume_Latest.pdf"
-                  download
-                  whileHover={{ scale: 1.05, boxShadow: "0px 0px 8px #4fc1ff" }}
-                  whileTap={{ scale: 0.95 }}
-                  className="mt-4 inline-flex items-center space-x-2 bg-[#4ec9b0]/20 text-[#4ec9b0] px-4 py-2 rounded-md border border-[#4ec9b0]/50 hover:bg-[#4ec9b0]/30 transition"
-                >
-                  <FileDown className="h-4 w-4" />
-                  <span>Download Resume</span>
-                </motion.a>
+                {/* Resume Buttons */}
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <motion.a
+                    href="/Gian_Mark_Vigo_Resume_Latest.pdf"
+                    download
+                    whileHover={{ scale: 1.05, boxShadow: "0px 0px 8px #4fc1ff" }}
+                    whileTap={{ scale: 0.95 }}
+                    className="inline-flex items-center space-x-2 bg-[#4ec9b0]/20 text-[#4ec9b0] px-4 py-2 rounded-md border border-[#4ec9b0]/50 hover:bg-[#4ec9b0]/30 transition"
+                  >
+                    <FileDown className="h-4 w-4" />
+                    <span>Download Resume</span>
+                  </motion.a>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05, boxShadow: "0px 0px 8px #4fc1ff" }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setIsResumeOpen(true)}
+                    className="inline-flex items-center space-x-2 bg-[#4fc1ff]/20 text-[#4fc1ff] px-4 py-2 rounded-md border border-[#4fc1ff]/50 hover:bg-[#4fc1ff]/30 transition"
+                  >
+                    <ImageIcon className="h-4 w-4" />
+                    <span>Preview Resume</span>
+                  </motion.button>
+                </div>
               </motion.div>
             )}
 
@@ -406,6 +419,37 @@ export default function Home() {
                   </motion.button>
                 </div>
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* Modal for Resume Preview */}
+        {isResumeOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-2"
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="relative w-full max-w-4xl h-[80vh] bg-[#1e1e1e] border border-white/20 rounded-lg p-3 sm:p-4 flex flex-col"
+            >
+              <button
+                onClick={() => setIsResumeOpen(false)}
+                className="absolute top-2 right-2 sm:top-3 sm:right-3 text-gray-300 hover:text-white"
+              >
+                <X className="h-5 w-5 sm:h-6 sm:w-6" />
+              </button>
+
+              <iframe
+                src="/Gian_Mark_Vigo_Resume_Latest.pdf"
+                className="w-full h-full rounded-md"
+                title="Resume Preview"
+              />
             </motion.div>
           </motion.div>
         )}
