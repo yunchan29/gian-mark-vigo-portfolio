@@ -21,7 +21,7 @@ const projects = [
 • Designed and developed a web-based Management Information System for permit and housing data.
 • Implemented user roles, document archiving, and application tracking using Firebase.`,
     link: "https://github.com/yunchan29/CHSD-MIS",
-    site: "https://your-deployed-site-1.com",
+    site: "https://chsd.netlify.app",
     images: [
       "/screenshots/chsd1.png",
       "/screenshots/chsd2.png",
