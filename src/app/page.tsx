@@ -3,7 +3,16 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { TypeAnimation } from "react-type-animation";
-import { Github, Linkedin, Mail, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Github,
+  Linkedin,
+  Mail,
+  ChevronLeft,
+  ChevronRight,
+  Globe,
+  X,
+  Image as ImageIcon,
+} from "lucide-react";
 
 const projects = [
   {
@@ -12,6 +21,12 @@ const projects = [
 • Designed and developed a web-based Management Information System for permit and housing data.
 • Implemented user roles, document archiving, and application tracking using Firebase.`,
     link: "https://github.com/yunchan29/CHSD-MIS",
+    site: "https://your-deployed-site-1.com",
+    images: [
+      "/screenshots/chsd1.png",
+      "/screenshots/chsd2.png",
+      "/screenshots/chsd3.png",
+    ],
   },
   {
     title: "Personnel Management System",
@@ -20,6 +35,12 @@ const projects = [
 • Designed role-based dashboards and modular UI using Laravel Blade and Alpine.js.
 • Streamlined job postings, interviews, and training evaluations into one platform.`,
     link: "https://github.com/yunchan29/Personnel-Management-Vills",
+    site: "https://your-deployed-site-2.com",
+    images: [
+      "/screenshots/pms1.png",
+      "/screenshots/pms2.png",
+      "/screenshots/pms3.png",
+    ],
   },
   {
     title: "KairoAI – AI-Powered Meeting & Workflow Hub",
@@ -28,24 +49,47 @@ const projects = [
 • Implemented foundation stack with Next.js, NestJS, PostgreSQL, and Google OAuth; integrated speech-to-text and AI summarization via OpenAI GPT.
 • Planned features: real-time collaboration, Jira/Slack integrations, semantic search, and cloud deployment with Docker + CI/CD.`,
     link: "https://github.com/yunchan29/kairoBackend",
+    site: "https://your-deployed-site-3.com",
+    images: [
+      "/screenshots/kairo1.png",
+      "/screenshots/kairo2.png",
+      "/screenshots/kairo3.png",
+    ],
   },
 ];
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<"about" | "projects" | "experience" | "contact">("about");
+  const [activeTab, setActiveTab] = useState<
+    "about" | "projects" | "experience" | "contact"
+  >("about");
   const [projectIndex, setProjectIndex] = useState(0);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [screenshotIndex, setScreenshotIndex] = useState(0);
 
   const nextProject = () =>
     setProjectIndex((prev) => (prev + 1) % projects.length);
   const prevProject = () =>
     setProjectIndex((prev) => (prev - 1 + projects.length) % projects.length);
 
+  const nextScreenshot = () =>
+    setScreenshotIndex(
+      (prev) =>
+        (prev + 1) % (projects[projectIndex].images?.length || 1)
+    );
+  const prevScreenshot = () =>
+    setScreenshotIndex(
+      (prev) =>
+        (prev - 1 + (projects[projectIndex].images?.length || 1)) %
+        (projects[projectIndex].images?.length || 1)
+    );
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-[#1e1e1e] text-[#d4d4d4] font-mono p-6 space-y-6">
-      
       {/* Top Terminal (Intro) */}
-      <div className="w-full max-w-4xl rounded-lg border border-[#3c3c3c] bg-[#1e1e1e] shadow-lg">
-        <div className="flex items-center space-x-2 border-b border-[#3c3c3c] px-4 py-2 bg-[#2d2d2d]">
+      <div className="w-full max-w-4xl rounded-lg border border-white/20 
+          bg-white/10 backdrop-blur-md shadow-xl shadow-black/30">
+        <div className="flex items-center space-x-2 border-b border-white/20 px-4 py-2 bg-white/10 backdrop-blur-sm">
           <div className="h-3 w-3 rounded-full bg-red-500"></div>
           <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
           <div className="h-3 w-3 rounded-full bg-green-500"></div>
@@ -72,40 +116,44 @@ export default function Home() {
               Focused on building clean, interactive, and user-friendly apps.
             </p>
             <p>
-              Skills: HTML, CSS, JavaScript, Java, Next.js, React, Laravel, Tailwind, SQL, Git
+              Skills: HTML, CSS, JavaScript, Java, Next.js, React, Laravel,
+              Tailwind, SQL, Git
             </p>
           </div>
         </div>
       </div>
 
       {/* Bottom Terminal (Tabbed) */}
-      <div className="w-full max-w-4xl rounded-lg border border-[#3c3c3c] bg-[#1e1e1e] shadow-lg h-[28rem] flex flex-col">
-       {/* Tabs */}
-<div className="flex items-center border-b border-[#3c3c3c] bg-[#2d2d2d] text-sm">
-  {(["about", "projects", "experience", "contact"] as const).map((tab) => (
-    <button
-      key={tab}
-      onClick={() => setActiveTab(tab)}
-      className={`px-4 py-2 ${
-        activeTab === tab ? "bg-[#1e1e1e] text-[#9cdcfe]" : "text-[#808080]"
-      }`}
-    >
-      {tab}.txt
-    </button>
-  ))}
-</div>
-
+      <div className="w-full max-w-4xl rounded-lg border border-white/20 
+          bg-white/10 backdrop-blur-md shadow-xl shadow-black/30 h-[28rem] flex flex-col">
+        {/* Tabs */}
+        <div className="flex items-center border-b border-white/20 bg-white/10 backdrop-blur-sm text-sm">
+          {(["about", "projects", "experience", "contact"] as const).map(
+            (tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2 ${
+                  activeTab === tab
+                    ? "bg-white/5 text-[#9cdcfe]"
+                    : "text-[#808080]"
+                }`}
+              >
+                {tab}.txt
+              </button>
+            )
+          )}
+        </div>
 
         {/* Content */}
         <div className="p-6 space-y-4 overflow-y-auto text-sm sm:text-base">
-          
           {/* About Tab */}
           {activeTab === "about" && (
             <div>
               <span className="text-[#4ec9b0]">gian@portfolio:~$ cat about.txt</span>
               <p className="ml-4 mt-2">
-                Passionate developer with experience in building full-stack applications,  
-                specializing in clean UI/UX and modern web stacks.
+                Passionate developer with experience in building full-stack
+                applications, specializing in clean UI/UX and modern web stacks.
               </p>
             </div>
           )}
@@ -113,35 +161,68 @@ export default function Home() {
           {/* Projects Tab */}
           {activeTab === "projects" && (
             <div>
-              <span className="text-[#4ec9b0]">gian@portfolio:~$ cat projects.txt</span>
-              <div className="ml-4 mt-4 border border-[#3c3c3c] p-4 rounded-lg relative overflow-hidden">
-                <h3 className="text-[#dcdcaa] font-bold">{projects[projectIndex].title}</h3>
-                <p className="mt-2 whitespace-pre-line">{projects[projectIndex].description}</p>
-                {projects[projectIndex].link && (
-                  <Link
-                    href={projects[projectIndex].link}
-                    target="_blank"
-                    className="text-[#4fc1ff] underline hover:text-[#9cdcfe] mt-2 inline-block"
-                  >
-                    View on GitHub
-                  </Link>
-                )}
+              <span className="text-[#4ec9b0]">
+                gian@portfolio:~$ cat projects.txt
+              </span>
+              <div className="ml-4 mt-4 border border-white/20 bg-white/5 
+                   backdrop-blur-md p-4 rounded-lg relative overflow-hidden shadow-lg">
+                <h3 className="text-[#dcdcaa] font-bold">
+                  {projects[projectIndex].title}
+                </h3>
+                <p className="mt-2 whitespace-pre-line">
+                  {projects[projectIndex].description}
+                </p>
 
-                {/* Carousel Controls */}
-                <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 pointer-events-none">
+                <div className="flex space-x-6 mt-3">
+                  {projects[projectIndex].link && (
+                    <Link
+                      href={projects[projectIndex].link}
+                      target="_blank"
+                      className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition"
+                    >
+                      <Github className="h-4 w-4" />
+                      <span>View on GitHub</span>
+                    </Link>
+                  )}
+
+                  {projects[projectIndex].site && (
+                    <Link
+                      href={projects[projectIndex].site}
+                      target="_blank"
+                      className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition"
+                    >
+                      <Globe className="h-4 w-4" />
+                      <span>Live Site</span>
+                    </Link>
+                  )}
+
                   <button
-                    onClick={prevProject}
-                    className="pointer-events-auto p-2 rounded-full bg-[#2d2d2d] hover:bg-[#3c3c3c] text-[#4fc1ff]"
+                    onClick={() => {
+                      setIsModalOpen(true);
+                      setScreenshotIndex(0);
+                    }}
+                    className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition"
                   >
-                    <ChevronLeft />
-                  </button>
-                  <button
-                    onClick={nextProject}
-                    className="pointer-events-auto p-2 rounded-full bg-[#2d2d2d] hover:bg-[#3c3c3c] text-[#4fc1ff]"
-                  >
-                    <ChevronRight />
+                    <ImageIcon className="h-4 w-4" />
+                    <span>Preview</span>
                   </button>
                 </div>
+              </div>
+
+              {/* Carousel Controls beside card */}
+              <div className="flex justify-between items-center mt-4">
+                <button
+                  onClick={prevProject}
+                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff] backdrop-blur-sm"
+                >
+                  <ChevronLeft />
+                </button>
+                <button
+                  onClick={nextProject}
+                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff] backdrop-blur-sm"
+                >
+                  <ChevronRight />
+                </button>
               </div>
             </div>
           )}
@@ -149,18 +230,30 @@ export default function Home() {
           {/* Experience Tab */}
           {activeTab === "experience" && (
             <div>
-              <span className="text-[#4ec9b0]">gian@portfolio:~$ cat experience.txt</span>
+              <span className="text-[#4ec9b0]">
+                gian@portfolio:~$ cat experience.txt
+              </span>
               <div className="mt-4">
-                <h2 className="text-[#4ec9b0] font-bold text-lg">WORK EXPERIENCE</h2>
+                <h2 className="text-[#4ec9b0] font-bold text-lg">
+                  WORK EXPERIENCE
+                </h2>
 
                 <div className="mt-2 ml-4">
-                  <h3 className="text-[#dcdcaa] font-semibold">IT Support Intern</h3>
+                  <h3 className="text-[#dcdcaa] font-semibold">
+                    IT Support Intern
+                  </h3>
                   <p className="text-gray-400 italic text-sm">
                     ICT Department – Calamba City Hall (Nov 2024 – Apr 2025)
                   </p>
                   <ul className="mt-2 list-disc ml-5 text-gray-300">
-                    <li>Provided technical support, software installation, and network maintenance.</li>
-                    <li>Assisted in daily IT operations, troubleshooting multiple technical issues weekly.</li>
+                    <li>
+                      Provided technical support, software installation, and
+                      network maintenance.
+                    </li>
+                    <li>
+                      Assisted in daily IT operations, troubleshooting multiple
+                      technical issues weekly.
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -170,7 +263,9 @@ export default function Home() {
           {/* Contact Tab */}
           {activeTab === "contact" && (
             <div>
-              <span className="text-[#4ec9b0]">gian@portfolio:~$ cat contact.txt</span>
+              <span className="text-[#4ec9b0]">
+                gian@portfolio:~$ cat contact.txt
+              </span>
               <div className="ml-4 mt-2 flex flex-col space-y-2">
                 <Link
                   href="https://github.com/yunchan29"
@@ -198,9 +293,47 @@ export default function Home() {
               </div>
             </div>
           )}
-
         </div>
       </div>
+
+      {/* Modal for Screenshot Preview */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+          <div className="relative w-[90%] max-w-3xl bg-[#1e1e1e] border border-white/20 rounded-lg p-4">
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-3 right-3 text-gray-300 hover:text-white"
+            >
+              <X className="h-6 w-6" />
+            </button>
+
+            <div className="flex flex-col items-center">
+              <img
+                src={
+                  projects[projectIndex].images?.[screenshotIndex] ||
+                  "/placeholder.png"
+                }
+                alt="Project screenshot"
+                className="rounded-md max-h-[70vh] object-contain"
+              />
+              <div className="flex justify-between w-full mt-4">
+                <button
+                  onClick={prevScreenshot}
+                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff]"
+                >
+                  <ChevronLeft />
+                </button>
+                <button
+                  onClick={nextScreenshot}
+                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff]"
+                >
+                  <ChevronRight />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
