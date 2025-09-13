@@ -80,20 +80,21 @@ export default function Home() {
 
       {/* Bottom Terminal (Tabbed) */}
       <div className="w-full max-w-4xl rounded-lg border border-[#3c3c3c] bg-[#1e1e1e] shadow-lg h-[28rem] flex flex-col">
-        {/* Tabs */}
-        <div className="flex items-center border-b border-[#3c3c3c] bg-[#2d2d2d] text-sm">
-          {["about", "projects", "experience", "contact"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab as any)}
-              className={`px-4 py-2 ${
-                activeTab === tab ? "bg-[#1e1e1e] text-[#9cdcfe]" : "text-[#808080]"
-              }`}
-            >
-              {tab}.txt
-            </button>
-          ))}
-        </div>
+       {/* Tabs */}
+<div className="flex items-center border-b border-[#3c3c3c] bg-[#2d2d2d] text-sm">
+  {(["about", "projects", "experience", "contact"] as const).map((tab) => (
+    <button
+      key={tab}
+      onClick={() => setActiveTab(tab)}
+      className={`px-4 py-2 ${
+        activeTab === tab ? "bg-[#1e1e1e] text-[#9cdcfe]" : "text-[#808080]"
+      }`}
+    >
+      {tab}.txt
+    </button>
+  ))}
+</div>
+
 
         {/* Content */}
         <div className="p-6 space-y-4 overflow-y-auto text-sm sm:text-base">
