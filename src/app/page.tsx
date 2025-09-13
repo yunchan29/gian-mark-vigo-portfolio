@@ -117,14 +117,12 @@ export default function Home() {
             <p>
               Hi, I’m <span className="text-[#dcdcaa]">Gian Mark Vigo</span> 👨‍💻
             </p>
-            <p>
-              Web Developer | Programmer  
-              Focused on building clean, interactive, and user-friendly apps.
-            </p>
-            <p>
-              Skills: HTML, CSS, JavaScript, Java, Next.js, React, Laravel,
-              Tailwind, SQL, Git
-            </p>
+           <p>
+  Full-Stack Web Developer | React & Laravel  
+  Experienced in building scalable management systems and hiring platforms, with a focus on clean design, user-friendly interfaces, and efficient backend solutions.
+</p>
+
+           
           </div>
         </div>
       </motion.div>
@@ -164,126 +162,126 @@ export default function Home() {
             {/* About Tab */}
             {activeTab === "about" && (
               <motion.div
-                key="about"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-              >
-                <span className="text-[#4ec9b0]">
-                  gian@portfolio:~$ cat about.txt
-                </span>
-                <p className="ml-2 sm:ml-4 mt-2">
-                  Passionate developer with experience in building full-stack
-                  applications, specializing in clean UI/UX and modern web
-                  stacks.
-                </p>
+  key="about"
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, y: -20 }}
+  transition={{ duration: 0.4 }}
+>
+  <span className="text-[#4ec9b0]">
+    gian@portfolio:~$ cat about.txt
+  </span>
 
-                {/* Resume Buttons */}
-                <div className="mt-4 flex flex-wrap gap-3">
-                  <motion.a
-                    href="/Gian_Mark_Vigo_Resume_Latest.pdf"
-                    download
-                    whileHover={{ scale: 1.05, boxShadow: "0px 0px 8px #4fc1ff" }}
-                    whileTap={{ scale: 0.95 }}
-                    className="inline-flex items-center space-x-2 bg-[#4ec9b0]/20 text-[#4ec9b0] px-4 py-2 rounded-md border border-[#4ec9b0]/50 hover:bg-[#4ec9b0]/30 transition"
-                  >
-                    <FileDown className="h-4 w-4" />
-                    <span>Download Resume</span>
-                  </motion.a>
+  {/* Intro */}
+  <p className="ml-2 sm:ml-4 mt-2 max-w-2xl text-sm sm:text-base leading-relaxed">
+    Passionate full-stack developer with experience building interactive,
+    user-focused applications. Skilled in modern web stacks and dedicated
+    to delivering clean UI/UX with scalable solutions.
+  </p>
 
-                  <motion.button
-                    whileHover={{ scale: 1.05, boxShadow: "0px 0px 8px #4fc1ff" }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setIsResumeOpen(true)}
-                    className="inline-flex items-center space-x-2 bg-[#4fc1ff]/20 text-[#4fc1ff] px-4 py-2 rounded-md border border-[#4fc1ff]/50 hover:bg-[#4fc1ff]/30 transition"
-                  >
-                    <ImageIcon className="h-4 w-4" />
-                    <span>Preview Resume</span>
-                  </motion.button>
-                </div>
-              </motion.div>
-            )}
+  {/* Resume Buttons */}
+  <div className="mt-4 flex flex-wrap gap-3 ml-2 sm:ml-4">
+    <motion.a
+      href="/Gian_Mark_Vigo_Resume_Latest.pdf"
+      download
+      whileHover={{ scale: 1.05, boxShadow: "0px 0px 8px #4fc1ff" }}
+      whileTap={{ scale: 0.95 }}
+      className="inline-flex items-center space-x-2 bg-[#4ec9b0]/20 text-[#4ec9b0] px-4 py-2 rounded-md border border-[#4ec9b0]/50 hover:bg-[#4ec9b0]/30 transition"
+    >
+      <FileDown className="h-4 w-4" />
+      <span>Download Resume</span>
+    </motion.a>
 
-            {/* Projects Tab */}
-            {activeTab === "projects" && (
-              <motion.div
-                key="projects"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-              >
-                <span className="text-[#4ec9b0]">
-                  gian@portfolio:~$ cat projects.txt
-                </span>
-                <div className="ml-2 sm:ml-4 mt-4 border border-white/20 bg-white/5 
-                   backdrop-blur-md p-3 sm:p-4 rounded-lg relative overflow-hidden shadow-lg">
-                  <h3 className="text-[#dcdcaa] font-bold text-sm sm:text-base md:text-lg">
-                    {projects[projectIndex].title}
-                  </h3>
-                  <p className="mt-2 whitespace-pre-line text-xs sm:text-sm">
-                    {projects[projectIndex].description}
-                  </p>
+    <motion.button
+      whileHover={{ scale: 1.05, boxShadow: "0px 0px 8px #4fc1ff" }}
+      whileTap={{ scale: 0.95 }}
+      onClick={() => setIsResumeOpen(true)}
+      className="inline-flex items-center space-x-2 bg-[#4fc1ff]/20 text-[#4fc1ff] px-4 py-2 rounded-md border border-[#4fc1ff]/50 hover:bg-[#4fc1ff]/30 transition"
+    >
+      <ImageIcon className="h-4 w-4" />
+      <span>Preview Resume</span>
+    </motion.button>
+  </div>
 
-                  <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0 mt-3">
-                    {projects[projectIndex].link && (
-                      <Link
-                        href={projects[projectIndex].link}
-                        target="_blank"
-                        className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition text-xs sm:text-sm"
-                      >
-                        <Github className="h-4 w-4" />
-                        <span>View on GitHub</span>
-                      </Link>
-                    )}
+  {/* Skills */}
+  <div className="mt-6 ml-2 sm:ml-4">
+    <h3 className="text-lg font-semibold mb-3">Skills</h3>
 
-                    {projects[projectIndex].site && (
-                      <Link
-                        href={projects[projectIndex].site}
-                        target="_blank"
-                        className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition text-xs sm:text-sm"
-                      >
-                        <Globe className="h-4 w-4" />
-                        <span>Live Site</span>
-                      </Link>
-                    )}
+    {/* Frontend */}
+    <h4 className="text-sm font-medium text-[#4fc1ff] mb-2">Frontend</h4>
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-4">
+      <div className="flex flex-col items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML" className="h-8 w-8" />
+        <span className="mt-2 text-xs sm:text-sm">HTML</span>
+      </div>
+      <div className="flex flex-col items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS" className="h-8 w-8" />
+        <span className="mt-2 text-xs sm:text-sm">CSS</span>
+      </div>
+      <div className="flex flex-col items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" className="h-8 w-8" />
+        <span className="mt-2 text-xs sm:text-sm">JavaScript</span>
+      </div>
+      <div className="flex flex-col items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" className="h-8 w-8" />
+        <span className="mt-2 text-xs sm:text-sm">React</span>
+      </div>
+      <div className="flex flex-col items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" alt="Next.js" className="h-8 w-8 dark:invert" />
+        <span className="mt-2 text-xs sm:text-sm">Next.js</span>
+      </div>
+      <div className="flex flex-col items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" 
+     alt="Tailwind CSS" 
+     className="h-8 w-8" />
 
-                    <motion.button
-                      whileTap={{ scale: 0.9 }}
-                      whileHover={{ scale: 1.05, color: "#9cdcfe" }}
-                      onClick={() => {
-                        setIsModalOpen(true);
-                        setScreenshotIndex(0);
-                      }}
-                      className="flex items-center space-x-2 text-[#4fc1ff] transition text-xs sm:text-sm"
-                    >
-                      <ImageIcon className="h-4 w-4" />
-                      <span>Preview</span>
-                    </motion.button>
-                  </div>
-                </div>
+        <span className="mt-2 text-xs sm:text-sm">Tailwind</span>
+      </div>
+    </div>
 
-                {/* Carousel Controls */}
-                <div className="flex justify-between items-center mt-4">
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    whileHover={{ scale: 1.05 }}
-                    onClick={prevProject}
-                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff] backdrop-blur-sm"
-                  >
-                    <ChevronLeft />
-                  </motion.button>
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    whileHover={{ scale: 1.05 }}
-                    onClick={nextProject}
-                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff] backdrop-blur-sm"
-                  >
-                    <ChevronRight />
-                  </motion.button>
-                </div>
-              </motion.div>
+    {/* Backend */}
+    <h4 className="text-sm font-medium text-[#4fc1ff] mb-2">Backend</h4>
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-4">
+      <div className="flex flex-col items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" alt="PHP" className="h-8 w-8" />
+        <span className="mt-2 text-xs sm:text-sm">PHP</span>
+      </div>
+      <div className="flex flex-col items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition">
+       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg" 
+     alt="Laravel" 
+     className="h-8 w-8" />
+
+        <span className="mt-2 text-xs sm:text-sm">Laravel</span>
+      </div>
+      <div className="flex flex-col items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg" alt="Firebase" className="h-8 w-8" />
+        <span className="mt-2 text-xs sm:text-sm">Firebase</span>
+      </div>
+      <div className="flex flex-col items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="SQL" className="h-8 w-8" />
+        <span className="mt-2 text-xs sm:text-sm">SQL</span>
+      </div>
+    </div>
+
+    {/* Tools */}
+    <h4 className="text-sm font-medium text-[#4fc1ff] mb-2">Tools</h4>
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      <div className="flex flex-col items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git" className="h-8 w-8" />
+        <span className="mt-2 text-xs sm:text-sm">Git</span>
+      </div>
+      <div className="flex flex-col items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg" alt="Figma" className="h-8 w-8" />
+        <span className="mt-2 text-xs sm:text-sm">Figma</span>
+      </div>
+      <div className="flex flex-col items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java" className="h-8 w-8" />
+        <span className="mt-2 text-xs sm:text-sm">Java</span>
+      </div>
+    </div>
+  </div>
+</motion.div>
+
             )}
 
             {/* Experience Tab */}
