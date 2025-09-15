@@ -14,6 +14,7 @@ interface TerminalProps {
   >;
   setShowMainWindow: React.Dispatch<React.SetStateAction<boolean>>;
   setIsResumeOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onCommandExecuted: () => void;
 }
 
 const TerminalTop: React.FC<TerminalProps> = ({
