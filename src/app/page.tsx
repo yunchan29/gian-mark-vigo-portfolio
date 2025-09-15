@@ -106,7 +106,7 @@ const Home: React.FC = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 1 }}
             >
-              Skip to Resume
+              Resume
             </motion.button>
           </div>
         </div>
