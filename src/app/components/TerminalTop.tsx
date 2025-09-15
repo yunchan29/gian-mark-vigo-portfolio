@@ -22,7 +22,6 @@ const TerminalTop: React.FC<TerminalProps> = ({
   title,
   taskbar,
   setTaskbar,
-  activeTab,
   setActiveTab,
   setShowMainWindow,
   setIsResumeOpen,
@@ -38,7 +37,13 @@ const TerminalTop: React.FC<TerminalProps> = ({
   const [showHints, setShowHints] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const clickableCommands = ["about", "projects", "experience", "contact", "resume"];
+  const clickableCommands = [
+    "about",
+    "projects",
+    "experience",
+    "contact",
+    "resume",
+  ];
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
@@ -49,49 +54,51 @@ const TerminalTop: React.FC<TerminalProps> = ({
   }, [isMinimized]);
 
   const handleCommand = (cmd: string) => {
-  if (!cmd) return;
-  const normalized = cmd.toLowerCase().trim();
-  setHistory((prev) => [...prev, cmd]);
-  setHistoryIndex(-1);
+    if (!cmd) return;
+    const normalized = cmd.toLowerCase().trim();
+    setHistory((prev) => [...prev, cmd]);
+    setHistoryIndex(-1);
 
-  if (["about", "projects", "experience", "contact"].includes(normalized)) {
-    setActiveTab(normalized as typeof activeTab);
-    setShowMainWindow(true);
-    setOutput((prev) => [...prev, `$ ${cmd}`, `Opening ${normalized} tab...`]);
-    setShowHints(false);
+    if (["about", "projects", "experience", "contact"].includes(normalized)) {
+      setActiveTab(normalized as TerminalProps["activeTab"]);
+      setShowMainWindow(true);
+      setOutput((prev) => [...prev, `$ ${cmd}`, `Opening ${normalized} tab...`]);
+      setShowHints(false);
 
-    // ✅ Auto-minimize after valid command
-    setTimeout(() => {
-      setTaskbar((prev) => ({ ...prev, [id]: true }));
-    }, 300); // small delay so output shows before minimizing
-  } else if (normalized === "resume") {
-    setIsResumeOpen(true);
-    setOutput((prev) => [...prev, `$ ${cmd}`, "Opening Resume modal..."]);
-    setShowHints(false);
+      // ✅ Auto-minimize after valid command
+      setTimeout(() => {
+        setTaskbar((prev) => ({ ...prev, [id]: true }));
+      }, 300);
+    } else if (normalized === "resume") {
+      setIsResumeOpen(true);
+      setOutput((prev) => [...prev, `$ ${cmd}`, "Opening Resume modal..."]);
+      setShowHints(false);
 
-    // ✅ Auto-minimize after resume command
-    setTimeout(() => {
-      setTaskbar((prev) => ({ ...prev, [id]: true }));
-    }, 300);
-  } else if (normalized === "help") {
-    setOutput((prev) => [
-      ...prev,
-      `$ ${cmd}`,
-      "Available commands: about | projects | experience | contact | resume",
-    ]);
-    setShowHints(true);
-  } else {
-    setOutput((prev) => [...prev, `$ ${cmd}`, `Command not found: ${cmd}`]);
-  }
-  setCommand("");
-};
+      // ✅ Auto-minimize after resume command
+      setTimeout(() => {
+        setTaskbar((prev) => ({ ...prev, [id]: true }));
+      }, 300);
+    } else if (normalized === "help") {
+      setOutput((prev) => [
+        ...prev,
+        `$ ${cmd}`,
+        "Available commands: about | projects | experience | contact | resume",
+      ]);
+      setShowHints(true);
+    } else {
+      setOutput((prev) => [...prev, `$ ${cmd}`, `Command not found: ${cmd}`]);
+    }
+    setCommand("");
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowUp") {
       e.preventDefault();
       if (history.length > 0) {
         const index =
-          historyIndex === -1 ? history.length - 1 : Math.max(0, historyIndex - 1);
+          historyIndex === -1
+            ? history.length - 1
+            : Math.max(0, historyIndex - 1);
         setCommand(history[index]);
         setHistoryIndex(index);
       }
@@ -123,7 +130,9 @@ const TerminalTop: React.FC<TerminalProps> = ({
           <div className="flex items-center justify-between bg-white/5 px-4 py-1 border-b border-white/20">
             <span className="font-bold text-sm">{title}</span>
             <button
-              onClick={() => setTaskbar((prev) => ({ ...prev, [id]: true }))}
+              onClick={() =>
+                setTaskbar((prev) => ({ ...prev, [id]: true }))
+              }
               className="text-xs px-2 py-1 bg-white/10 rounded hover:bg-white/20 transition"
             >
               Minimize
@@ -131,7 +140,10 @@ const TerminalTop: React.FC<TerminalProps> = ({
           </div>
 
           {/* Content */}
-          <div ref={scrollRef} className="p-4 overflow-y-auto flex-1 flex flex-col">
+          <div
+            ref={scrollRef}
+            className="p-4 overflow-y-auto flex-1 flex flex-col"
+          >
             <div className="flex flex-col space-y-1 mb-2">
               {output.map((line, idx) => (
                 <div key={idx} className="text-[#dcdcdc] text-xs">

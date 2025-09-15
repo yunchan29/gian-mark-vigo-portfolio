@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import ProjectModal from "./ProjectModal";
+
 
 interface Project {
   title: string;
@@ -20,7 +20,6 @@ interface ProjectsProps {
 
 export default function Projects({
   projects,
-  projectIndex,
   setProjectIndex,
   setIsModalOpen,
   setScreenshotIndex,
