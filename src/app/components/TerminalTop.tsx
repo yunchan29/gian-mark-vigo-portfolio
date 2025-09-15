@@ -35,8 +35,11 @@ const TerminalTop: React.FC<TerminalProps> = ({
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [showHints, setShowHints] = useState(false);
+  const [typingLine, setTypingLine] = useState<string | null>(null); // current line being typed
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const clickableCommands = [
     "about",
     "projects",
@@ -45,48 +48,73 @@ const TerminalTop: React.FC<TerminalProps> = ({
     "resume",
   ];
 
+  // auto scroll on new output
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
-  }, [output]);
+  }, [output, typingLine]);
 
+  // focus input when restored
   useEffect(() => {
     if (!isMinimized && inputRef.current) inputRef.current.focus();
   }, [isMinimized]);
 
-  const handleCommand = (cmd: string) => {
+  // cleanup typing timeout
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    };
+  }, []);
+
+  // simulate typing animation
+  const typeLine = (line: string) => {
+    return new Promise<void>((resolve) => {
+      let i = 0;
+      setTypingLine("");
+      const tick = () => {
+        setTypingLine((prev) => (prev ?? "") + line[i]);
+        i++;
+        if (i < line.length) {
+          typingTimeoutRef.current = setTimeout(tick, 20);
+        } else {
+          setOutput((prev) => [...prev, line]);
+          setTypingLine(null);
+          resolve();
+        }
+      };
+      tick();
+    });
+  };
+
+  const handleCommand = async (cmd: string) => {
     if (!cmd) return;
     const normalized = cmd.toLowerCase().trim();
     setHistory((prev) => [...prev, cmd]);
     setHistoryIndex(-1);
 
+    setOutput((prev) => [...prev, `$ ${cmd}`]);
+
     if (["about", "projects", "experience", "contact"].includes(normalized)) {
+      await typeLine(`Opening ${normalized} tab...`);
       setActiveTab(normalized as TerminalProps["activeTab"]);
       setShowMainWindow(true);
-      setOutput((prev) => [...prev, `$ ${cmd}`, `Opening ${normalized} tab...`]);
       setShowHints(false);
-
-      // ✅ Auto-minimize after valid command
       setTimeout(() => {
         setTaskbar((prev) => ({ ...prev, [id]: true }));
       }, 300);
     } else if (normalized === "resume") {
+      await typeLine("Opening Resume modal...");
       setIsResumeOpen(true);
-      setOutput((prev) => [...prev, `$ ${cmd}`, "Opening Resume modal..."]);
       setShowHints(false);
-
-      // ✅ Auto-minimize after resume command
       setTimeout(() => {
         setTaskbar((prev) => ({ ...prev, [id]: true }));
       }, 300);
     } else if (normalized === "help") {
-      setOutput((prev) => [
-        ...prev,
-        `$ ${cmd}`,
-        "Available commands: about | projects | experience | contact | resume",
-      ]);
+      await typeLine(
+        "Available commands: about | projects | experience | contact | resume"
+      );
       setShowHints(true);
     } else {
-      setOutput((prev) => [...prev, `$ ${cmd}`, `Command not found: ${cmd}`]);
+      await typeLine(`Command not found: ${cmd}`);
     }
     setCommand("");
   };
@@ -121,14 +149,14 @@ const TerminalTop: React.FC<TerminalProps> = ({
     <>
       {!isMinimized && (
         <motion.div
-          className="w-full max-w-4xl rounded-lg border border-white/20 bg-white/10 backdrop-blur-md shadow-xl shadow-black/30 flex flex-col overflow-hidden mb-4 max-h-[12rem]"
+          className="w-full max-w-4xl rounded-lg border border-white/20 bg-black/80 backdrop-blur-md shadow-xl shadow-black/50 flex flex-col overflow-hidden mb-4 max-h-[14rem]"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
         >
           {/* Header */}
-          <div className="flex items-center justify-between bg-white/5 px-4 py-1 border-b border-white/20">
-            <span className="font-bold text-sm">{title}</span>
+          <div className="flex items-center justify-between bg-white/10 px-4 py-1 border-b border-white/20">
+            <span className="font-bold text-sm text-gray-200">{title}</span>
             <button
               onClick={() =>
                 setTaskbar((prev) => ({ ...prev, [id]: true }))
@@ -142,14 +170,20 @@ const TerminalTop: React.FC<TerminalProps> = ({
           {/* Content */}
           <div
             ref={scrollRef}
-            className="p-4 overflow-y-auto flex-1 flex flex-col"
+            className="p-4 overflow-y-auto flex-1 flex flex-col font-mono text-xs"
           >
             <div className="flex flex-col space-y-1 mb-2">
               {output.map((line, idx) => (
-                <div key={idx} className="text-[#dcdcdc] text-xs">
+                <div key={idx} className="text-[#dcdcdc] whitespace-pre-wrap">
                   {line}
                 </div>
               ))}
+              {typingLine && (
+                <div className="text-[#dcdcdc] whitespace-pre-wrap">
+                  {typingLine}
+                  <span className="animate-pulse text-[#4ec9b0]">█</span>
+                </div>
+              )}
             </div>
 
             {/* Input */}
@@ -161,11 +195,14 @@ const TerminalTop: React.FC<TerminalProps> = ({
                 value={command}
                 onChange={(e) => setCommand(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="bg-white/5 border border-white/10 rounded px-2 py-1 w-full text-xs text-[#d4d4d4] focus:outline-none focus:ring-1 focus:ring-[#4ec9b0]"
+                className="bg-transparent border-none outline-none w-full text-[#d4d4d4] caret-transparent"
                 placeholder="Type a command..."
                 autoFocus
               />
-              <span className="ml-1 animate-pulse text-[#4ec9b0]">█</span>
+              {/* Blinking cursor */}
+              <span className="ml-1 animate-ping text-[#4ec9b0]">
+                {command === "" ? "█" : ""}
+              </span>
             </div>
 
             {/* Clickable hints */}
