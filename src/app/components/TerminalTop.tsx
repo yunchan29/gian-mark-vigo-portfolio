@@ -3,15 +3,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 
-type TabType = "about" | "projects" | "experience" | "contact";
-
 interface TerminalProps {
   id: string;
   title: string;
   taskbar: { [key: string]: boolean };
   setTaskbar: React.Dispatch<React.SetStateAction<{ [key: string]: boolean }>>;
-  activeTab: TabType;
-  setActiveTab: React.Dispatch<React.SetStateAction<TabType>>;
+  activeTab: "about" | "projects" | "experience" | "contact";
+  setActiveTab: React.Dispatch<
+    React.SetStateAction<"about" | "projects" | "experience" | "contact">
+  >;
   setShowMainWindow: React.Dispatch<React.SetStateAction<boolean>>;
   setIsResumeOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -35,17 +35,9 @@ const TerminalTop: React.FC<TerminalProps> = ({
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [showHints, setShowHints] = useState(false);
-
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  const clickableCommands: (TabType | "resume")[] = [
-    "about",
-    "projects",
-    "experience",
-    "contact",
-    "resume",
-  ];
+  const clickableCommands = ["about", "projects", "experience", "contact", "resume"];
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
@@ -56,32 +48,42 @@ const TerminalTop: React.FC<TerminalProps> = ({
   }, [isMinimized]);
 
   const handleCommand = (cmd: string) => {
-    if (!cmd) return;
-    const normalized = cmd.toLowerCase().trim();
-    setHistory((prev) => [...prev, cmd]);
-    setHistoryIndex(-1);
+  if (!cmd) return;
+  const normalized = cmd.toLowerCase().trim();
+  setHistory((prev) => [...prev, cmd]);
+  setHistoryIndex(-1);
 
-    if (["about", "projects", "experience", "contact"].includes(normalized)) {
-      setActiveTab(normalized as TabType);
-      setShowMainWindow(true);
-      setOutput((prev) => [...prev, `$ ${cmd}`, `Opening ${normalized} tab...`]);
-      setShowHints(false);
-    } else if (normalized === "resume") {
-      setIsResumeOpen(true);
-      setOutput((prev) => [...prev, `$ ${cmd}`, "Opening Resume modal..."]);
-      setShowHints(false);
-    } else if (normalized === "help") {
-      setOutput((prev) => [
-        ...prev,
-        `$ ${cmd}`,
-        "Available commands: about | projects | experience | contact | resume",
-      ]);
-      setShowHints(true);
-    } else {
-      setOutput((prev) => [...prev, `$ ${cmd}`, `Command not found: ${cmd}`]);
-    }
-    setCommand("");
-  };
+  if (["about", "projects", "experience", "contact"].includes(normalized)) {
+    setActiveTab(normalized as typeof activeTab);
+    setShowMainWindow(true);
+    setOutput((prev) => [...prev, `$ ${cmd}`, `Opening ${normalized} tab...`]);
+    setShowHints(false);
+
+    // ✅ Auto-minimize after valid command
+    setTimeout(() => {
+      setTaskbar((prev) => ({ ...prev, [id]: true }));
+    }, 300); // small delay so output shows before minimizing
+  } else if (normalized === "resume") {
+    setIsResumeOpen(true);
+    setOutput((prev) => [...prev, `$ ${cmd}`, "Opening Resume modal..."]);
+    setShowHints(false);
+
+    // ✅ Auto-minimize after resume command
+    setTimeout(() => {
+      setTaskbar((prev) => ({ ...prev, [id]: true }));
+    }, 300);
+  } else if (normalized === "help") {
+    setOutput((prev) => [
+      ...prev,
+      `$ ${cmd}`,
+      "Available commands: about | projects | experience | contact | resume",
+    ]);
+    setShowHints(true);
+  } else {
+    setOutput((prev) => [...prev, `$ ${cmd}`, `Command not found: ${cmd}`]);
+  }
+  setCommand("");
+};
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowUp") {
@@ -97,7 +99,9 @@ const TerminalTop: React.FC<TerminalProps> = ({
       e.preventDefault();
       if (history.length > 0) {
         const index =
-          historyIndex === -1 ? -1 : Math.min(history.length - 1, historyIndex + 1);
+          historyIndex === -1
+            ? -1
+            : Math.min(history.length - 1, historyIndex + 1);
         setCommand(index === -1 ? "" : history[index]);
         setHistoryIndex(index);
       }

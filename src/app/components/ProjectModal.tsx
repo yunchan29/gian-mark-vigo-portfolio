@@ -14,11 +14,11 @@ interface Project {
 
 interface ProjectModalProps {
   isModalOpen: boolean;
-  setIsModalOpen: (open: boolean) => void;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   projects: Project[];
   projectIndex: number;
   screenshotIndex: number;
-  setScreenshotIndex: (index: number) => void;
+  setScreenshotIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function ProjectModal({
@@ -29,10 +29,11 @@ export default function ProjectModal({
   screenshotIndex,
   setScreenshotIndex,
 }: ProjectModalProps) {
+  const [expanded, setExpanded] = useState(false); // moved above conditional ✅
+
   if (!isModalOpen) return null;
 
   const project = projects[projectIndex];
-  const [expanded, setExpanded] = useState(false);
 
   const handlePrev = () => {
     if (!project.images) return;
@@ -47,11 +48,8 @@ export default function ProjectModal({
   };
 
   return (
-    // Wrapper: lets background stay clickable
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-6 pointer-events-none">
-      {/* Modal: only this captures clicks */}
-      <div className="bg-[#1e1e1e] p-8 rounded-lg w-[95%] max-w-7xl max-h-[95vh] overflow-auto flex gap-6 relative shadow-2xl border border-[#3c3c3c] pointer-events-auto">
-        
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6">
+      <div className="bg-[#1e1e1e] p-8 rounded-lg w-[95%] max-w-7xl max-h-[95vh] overflow-auto flex gap-6 relative">
         {/* Close button */}
         <button
           onClick={() => setIsModalOpen(false)}
