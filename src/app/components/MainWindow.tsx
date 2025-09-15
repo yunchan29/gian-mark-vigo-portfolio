@@ -10,15 +10,19 @@ import Experience from "./Experience";
 import Contact from "./Contact";
 import { projects } from "../data/projects";
 
+// MainWindowProps
 interface MainWindowProps {
   activeTab: "about" | "projects" | "experience" | "contact";
-  setActiveTab: any;
+  setActiveTab: React.Dispatch<
+    React.SetStateAction<"about" | "projects" | "experience" | "contact">
+  >;
   projectIndex: number;
-  setProjectIndex: any;
-  setIsModalOpen: any;
-  setScreenshotIndex: any;
-  setIsResumeOpen: any;
+  setProjectIndex: React.Dispatch<React.SetStateAction<number>>;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setScreenshotIndex: React.Dispatch<React.SetStateAction<number>>;
+  setIsResumeOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
 
 const MainWindow: React.FC<MainWindowProps> = ({
   activeTab,

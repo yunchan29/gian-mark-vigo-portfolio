@@ -47,8 +47,11 @@ export default function ProjectModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6">
-      <div className="bg-[#1e1e1e] p-8 rounded-lg w-[95%] max-w-7xl max-h-[95vh] overflow-auto flex gap-6 relative">
+    // Wrapper: lets background stay clickable
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-6 pointer-events-none">
+      {/* Modal: only this captures clicks */}
+      <div className="bg-[#1e1e1e] p-8 rounded-lg w-[95%] max-w-7xl max-h-[95vh] overflow-auto flex gap-6 relative shadow-2xl border border-[#3c3c3c] pointer-events-auto">
+        
         {/* Close button */}
         <button
           onClick={() => setIsModalOpen(false)}
@@ -62,7 +65,9 @@ export default function ProjectModal({
           <h2 className="text-2xl text-[#dcdcaa] font-bold">{project.title}</h2>
 
           <div className="text-gray-300 whitespace-pre-line max-h-[250px] overflow-hidden">
-            {expanded ? project.description : `${project.description.slice(0, 250)}...`}
+            {expanded
+              ? project.description
+              : `${project.description.slice(0, 250)}...`}
           </div>
           {project.description.length > 250 && (
             <button

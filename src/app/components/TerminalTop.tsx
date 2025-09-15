@@ -3,15 +3,17 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 
+type TabType = "about" | "projects" | "experience" | "contact";
+
 interface TerminalProps {
   id: string;
   title: string;
   taskbar: { [key: string]: boolean };
   setTaskbar: React.Dispatch<React.SetStateAction<{ [key: string]: boolean }>>;
-  activeTab: "about" | "projects" | "experience" | "contact";
-  setActiveTab: any;
-  setShowMainWindow: any;
-  setIsResumeOpen: any;
+  activeTab: TabType;
+  setActiveTab: React.Dispatch<React.SetStateAction<TabType>>;
+  setShowMainWindow: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsResumeOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const TerminalTop: React.FC<TerminalProps> = ({
@@ -33,9 +35,17 @@ const TerminalTop: React.FC<TerminalProps> = ({
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [showHints, setShowHints] = useState(false);
+
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const clickableCommands = ["about", "projects", "experience", "contact", "resume"];
+
+  const clickableCommands: (TabType | "resume")[] = [
+    "about",
+    "projects",
+    "experience",
+    "contact",
+    "resume",
+  ];
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
@@ -48,11 +58,11 @@ const TerminalTop: React.FC<TerminalProps> = ({
   const handleCommand = (cmd: string) => {
     if (!cmd) return;
     const normalized = cmd.toLowerCase().trim();
-    setHistory([...history, cmd]);
+    setHistory((prev) => [...prev, cmd]);
     setHistoryIndex(-1);
 
     if (["about", "projects", "experience", "contact"].includes(normalized)) {
-      setActiveTab(normalized);
+      setActiveTab(normalized as TabType);
       setShowMainWindow(true);
       setOutput((prev) => [...prev, `$ ${cmd}`, `Opening ${normalized} tab...`]);
       setShowHints(false);
@@ -77,7 +87,8 @@ const TerminalTop: React.FC<TerminalProps> = ({
     if (e.key === "ArrowUp") {
       e.preventDefault();
       if (history.length > 0) {
-        const index = historyIndex === -1 ? history.length - 1 : Math.max(0, historyIndex - 1);
+        const index =
+          historyIndex === -1 ? history.length - 1 : Math.max(0, historyIndex - 1);
         setCommand(history[index]);
         setHistoryIndex(index);
       }
@@ -85,7 +96,8 @@ const TerminalTop: React.FC<TerminalProps> = ({
     if (e.key === "ArrowDown") {
       e.preventDefault();
       if (history.length > 0) {
-        const index = historyIndex === -1 ? -1 : Math.min(history.length - 1, historyIndex + 1);
+        const index =
+          historyIndex === -1 ? -1 : Math.min(history.length - 1, historyIndex + 1);
         setCommand(index === -1 ? "" : history[index]);
         setHistoryIndex(index);
       }
