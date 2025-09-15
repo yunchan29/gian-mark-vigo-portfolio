@@ -68,7 +68,7 @@ const TerminalTop: React.FC<TerminalProps> = ({
   // simulate typing animation
   const typeLine = (line: string) => {
     return new Promise<void>((resolve) => {
-      let i = 0;
+      let i = -1;
       setTypingLine("");
       const tick = () => {
         setTypingLine((prev) => (prev ?? "") + line[i]);
