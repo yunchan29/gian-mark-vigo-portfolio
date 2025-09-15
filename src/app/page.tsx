@@ -1,460 +1,224 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
-import { TypeAnimation } from "react-type-animation";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Github,
-  Linkedin,
-  Mail,
-  ChevronLeft,
-  ChevronRight,
-  Globe,
-  X,
-  Image as ImageIcon,
-  FileDown,
-} from "lucide-react";
+import Draggable from "react-draggable"; // 👈 for dragging the minimized terminal
 
-const projects = [
-  {
-    title: "City Housing and Settlements Department MIS - Capstone Project",
-    description: `City Housing and Settlements Department – Calamba City Hall (Apr 2024 – Nov 2024)
-• Designed and developed a web-based Management Information System for permit and housing data.
-• Implemented user roles, document archiving, and application tracking using Firebase.`,
-    link: "https://github.com/yunchan29/CHSD-MIS",
-    site: "https://chsd.netlify.app",
-    images: [
-      "/screenshots/chsd1.png",
-      "/screenshots/chsd2.png",
-      "/screenshots/chsd3.png",
-    ],
-  },
-  {
-    title: "Personnel Management System",
-    description: `Vills Manpower Recruitment Agency (Apr 2025 – Present)
-• Built a web-based system for recruitment, applicant tracking, and employee management.
-• Designed role-based dashboards and modular UI using Laravel Blade and Alpine.js.
-• Streamlined job postings, interviews, and training evaluations into one platform.`,
-    link: "https://github.com/yunchan29/Personnel-Management-Vills",
-    site: "https://your-deployed-site-2.com",
-    images: [
-      "/screenshots/pms1.png",
-      "/screenshots/pms2.png",
-      "/screenshots/pms3.png",
-    ],
-  },
-  {
-    title: "KairoAI – AI-Powered Meeting & Workflow Hub",
-    description: `Personal Project (2025 – Ongoing)
-• Building an AI platform that records meetings, transcribes speech, and generates automated summaries with action items.
-• Implemented foundation stack with Next.js, NestJS, PostgreSQL, and Google OAuth; integrated speech-to-text and AI summarization via OpenAI GPT.
-• Planned features: real-time collaboration, Jira/Slack integrations, semantic search, and cloud deployment with Docker + CI/CD.`,
-    link: "https://github.com/yunchan29/kairoBackend",
-    site: "https://your-deployed-site-3.com",
-    images: [
-      "/screenshots/kairo1.png",
-      "/screenshots/kairo2.png",
-      "/screenshots/kairo3.png",
-    ],
-  },
-];
+import FloatingAscii from "./components/FloatingAscii";
+import TerminalTop from "./components/TerminalTop";
+import MainWindow from "./components/MainWindow";
+import ProjectModal from "./components/ProjectModal";
+import ResumeModal from "./components/ResumeModal";
 
-export default function Home() {
+import { projects } from "./data/projects";
+
+const Home: React.FC = () => {
+  const [started, setStarted] = useState(false);
+  const [showMainWindow, setShowMainWindow] = useState(false);
+  const [terminalVisible, setTerminalVisible] = useState(false);
+  const [portalFlash, setPortalFlash] = useState(false);
+
+  // NEW: minimized state
+  const [terminalMinimized, setTerminalMinimized] = useState(false);
+
+  // normal states
+  const [taskbar, setTaskbar] = useState<{ [key: string]: boolean }>({
+    top: false,
+  });
   const [activeTab, setActiveTab] = useState<
     "about" | "projects" | "experience" | "contact"
   >("about");
   const [projectIndex, setProjectIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isResumeOpen, setIsResumeOpen] = useState(false);
   const [screenshotIndex, setScreenshotIndex] = useState(0);
+  const [isResumeOpen, setIsResumeOpen] = useState(false);
 
-  const nextProject = () =>
-    setProjectIndex((prev) => (prev + 1) % projects.length);
-  const prevProject = () =>
-    setProjectIndex((prev) => (prev - 1 + projects.length) % projects.length);
+  /** -------------------- HANDLERS -------------------- **/
+  const handleStart = () => {
+    setPortalFlash(true); // trigger flash
+    setTimeout(() => {
+      setStarted(true);
+      setTerminalVisible(true);
+      setPortalFlash(false);
+    }, 1000); // after flash
+  };
 
-  const nextScreenshot = () =>
-    setScreenshotIndex(
-      (prev) => (prev + 1) % (projects[projectIndex].images?.length || 1)
-    );
-  const prevScreenshot = () =>
-    setScreenshotIndex(
-      (prev) =>
-        (prev - 1 + (projects[projectIndex].images?.length || 1)) %
-        (projects[projectIndex].images?.length || 1)
-    );
+  const handleCommandExecuted = () => {
+    // show main window with shimmer effect
+    setTimeout(() => {
+      setShowMainWindow(true);
+      // auto-minimize terminal after main window is ready
+      setTimeout(() => {
+        setTerminalVisible(false);
+        setTerminalMinimized(true); // 👈 minimized state
+      }, 600);
+    }, 600);
+  };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-[#1e1e1e] text-[#d4d4d4] font-mono px-4 sm:px-6 py-6 space-y-6">
-      {/* Top Terminal (Intro) */}
+    <main className="relative flex flex-col min-h-screen bg-[#1e1e1e] text-[#d4d4d4] font-mono overflow-hidden">
+      {/* Background */}
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="w-full max-w-4xl rounded-lg border border-white/20 
-          bg-white/10 backdrop-blur-md shadow-xl shadow-black/30"
-      >
-        <div className="flex items-center space-x-2 border-b border-white/20 px-4 py-2 bg-white/10 backdrop-blur-sm text-xs sm:text-sm">
-          <div className="h-2.5 w-2.5 rounded-full bg-red-500"></div>
-          <div className="h-2.5 w-2.5 rounded-full bg-yellow-500"></div>
-          <div className="h-2.5 w-2.5 rounded-full bg-green-500"></div>
-          <span className="ml-3 text-[#9cdcfe]">~/gian-portfolio</span>
-        </div>
+        className="absolute inset-0 bg-gradient-to-r from-[#0f2027] via-[#203a43] to-[#2c5364] -z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      />
 
-        <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
-          <div className="text-sm sm:text-base">
-            <span className="text-[#4ec9b0]">gian@portfolio:~$ </span>
-            <TypeAnimation
-              sequence={["whoami", 1200, "cat about.txt", 2000]}
-              speed={50}
-              wrapper="span"
-              repeat={Infinity}
-            />
+      {/* Floating ASCII after start */}
+      {started && <FloatingAscii />}
+
+      {/* ---------- INITIAL LANDING ---------- */}
+      {!started && (
+        <div className="flex flex-col items-center justify-center flex-1 text-center space-y-6 relative z-20">
+          <motion.h1
+            className="text-4xl md:text-6xl font-bold text-white drop-shadow-lg"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            Gian Mark Vigo
+          </motion.h1>
+          <motion.p
+            className="text-lg md:text-2xl text-gray-300"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            Full-Stack Developer
+          </motion.p>
+          <div className="flex flex-col md:flex-row gap-4 mt-8">
+            {/* Explore Button */}
+            <motion.button
+              onClick={handleStart}
+              className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 rounded-lg shadow-lg font-semibold text-white relative overflow-hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, scale: [1, 1.05, 1] }}
+              transition={{ delay: 0.6, duration: 1.5, repeat: Infinity }}
+            >
+              Explore
+            </motion.button>
+            {/* Skip to Resume */}
+            <motion.button
+              onClick={() => setIsResumeOpen(true)}
+              className="px-8 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg shadow-lg font-semibold text-white"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+            >
+              Skip to Resume
+            </motion.button>
           </div>
-
-          <div className="ml-2 sm:ml-4 space-y-2 text-xs sm:text-sm">
-            <p>
-              Hi, I’m <span className="text-[#dcdcaa]">Gian Mark Vigo</span> 👨‍💻
-            </p>
-            <p>
-              Web Developer | Programmer  
-              Focused on building clean, interactive, and user-friendly apps.
-            </p>
-            <p>
-              Skills: HTML, CSS, JavaScript, Java, Next.js, React, Laravel,
-              Tailwind, SQL, Git
-            </p>
-          </div>
         </div>
-      </motion.div>
+      )}
 
-      {/* Bottom Terminal (Tabbed) */}
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="w-full max-w-4xl rounded-lg border border-white/20 
-          bg-white/10 backdrop-blur-md shadow-xl shadow-black/30 h-auto md:h-[28rem] flex flex-col"
-      >
-        {/* Tabs */}
-        <div className="flex items-center overflow-x-auto border-b border-white/20 bg-white/10 backdrop-blur-sm text-xs sm:text-sm">
-          {(["about", "projects", "experience", "contact"] as const).map(
-            (tab) => (
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ scale: 1.05, color: "#9cdcfe" }}
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-3 sm:px-4 py-2 whitespace-nowrap ${
-                  activeTab === tab
-                    ? "bg-white/5 text-[#9cdcfe]"
-                    : "text-[#808080]"
-                }`}
-              >
-                {tab}.txt
-              </motion.button>
-            )
-          )}
-        </div>
-
-        {/* Content */}
-        <div className="p-4 sm:p-6 space-y-4 overflow-y-auto text-xs sm:text-sm md:text-base">
-          <AnimatePresence mode="wait">
-            {/* About Tab */}
-            {activeTab === "about" && (
-              <motion.div
-                key="about"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-              >
-                <span className="text-[#4ec9b0]">
-                  gian@portfolio:~$ cat about.txt
-                </span>
-                <p className="ml-2 sm:ml-4 mt-2">
-                  Passionate developer with experience in building full-stack
-                  applications, specializing in clean UI/UX and modern web
-                  stacks.
-                </p>
-
-                {/* Resume Buttons */}
-                <div className="mt-4 flex flex-wrap gap-3">
-                  <motion.a
-                    href="/Gian_Mark_Vigo_Resume_Latest.pdf"
-                    download
-                    whileHover={{ scale: 1.05, boxShadow: "0px 0px 8px #4fc1ff" }}
-                    whileTap={{ scale: 0.95 }}
-                    className="inline-flex items-center space-x-2 bg-[#4ec9b0]/20 text-[#4ec9b0] px-4 py-2 rounded-md border border-[#4ec9b0]/50 hover:bg-[#4ec9b0]/30 transition"
-                  >
-                    <FileDown className="h-4 w-4" />
-                    <span>Download Resume</span>
-                  </motion.a>
-
-                  <motion.button
-                    whileHover={{ scale: 1.05, boxShadow: "0px 0px 8px #4fc1ff" }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setIsResumeOpen(true)}
-                    className="inline-flex items-center space-x-2 bg-[#4fc1ff]/20 text-[#4fc1ff] px-4 py-2 rounded-md border border-[#4fc1ff]/50 hover:bg-[#4fc1ff]/30 transition"
-                  >
-                    <ImageIcon className="h-4 w-4" />
-                    <span>Preview Resume</span>
-                  </motion.button>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Projects Tab */}
-            {activeTab === "projects" && (
-              <motion.div
-                key="projects"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-              >
-                <span className="text-[#4ec9b0]">
-                  gian@portfolio:~$ cat projects.txt
-                </span>
-                <div className="ml-2 sm:ml-4 mt-4 border border-white/20 bg-white/5 
-                   backdrop-blur-md p-3 sm:p-4 rounded-lg relative overflow-hidden shadow-lg">
-                  <h3 className="text-[#dcdcaa] font-bold text-sm sm:text-base md:text-lg">
-                    {projects[projectIndex].title}
-                  </h3>
-                  <p className="mt-2 whitespace-pre-line text-xs sm:text-sm">
-                    {projects[projectIndex].description}
-                  </p>
-
-                  <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0 mt-3">
-                    {projects[projectIndex].link && (
-                      <Link
-                        href={projects[projectIndex].link}
-                        target="_blank"
-                        className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition text-xs sm:text-sm"
-                      >
-                        <Github className="h-4 w-4" />
-                        <span>View on GitHub</span>
-                      </Link>
-                    )}
-
-                    {projects[projectIndex].site && (
-                      <Link
-                        href={projects[projectIndex].site}
-                        target="_blank"
-                        className="flex items-center space-x-2 text-[#4fc1ff] hover:text-[#9cdcfe] transition text-xs sm:text-sm"
-                      >
-                        <Globe className="h-4 w-4" />
-                        <span>Live Site</span>
-                      </Link>
-                    )}
-
-                    <motion.button
-                      whileTap={{ scale: 0.9 }}
-                      whileHover={{ scale: 1.05, color: "#9cdcfe" }}
-                      onClick={() => {
-                        setIsModalOpen(true);
-                        setScreenshotIndex(0);
-                      }}
-                      className="flex items-center space-x-2 text-[#4fc1ff] transition text-xs sm:text-sm"
-                    >
-                      <ImageIcon className="h-4 w-4" />
-                      <span>Preview</span>
-                    </motion.button>
-                  </div>
-                </div>
-
-                {/* Carousel Controls */}
-                <div className="flex justify-between items-center mt-4">
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    whileHover={{ scale: 1.05 }}
-                    onClick={prevProject}
-                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff] backdrop-blur-sm"
-                  >
-                    <ChevronLeft />
-                  </motion.button>
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    whileHover={{ scale: 1.05 }}
-                    onClick={nextProject}
-                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff] backdrop-blur-sm"
-                  >
-                    <ChevronRight />
-                  </motion.button>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Experience Tab */}
-            {activeTab === "experience" && (
-              <motion.div
-                key="experience"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-              >
-                <span className="text-[#4ec9b0]">
-                  gian@portfolio:~$ cat experience.txt
-                </span>
-                <div className="mt-4">
-                  <h2 className="text-[#4ec9b0] font-bold text-sm sm:text-base md:text-lg">
-                    WORK EXPERIENCE
-                  </h2>
-
-                  <div className="mt-2 ml-2 sm:ml-4">
-                    <h3 className="text-[#dcdcaa] font-semibold text-xs sm:text-sm md:text-base">
-                      IT Support Intern
-                    </h3>
-                    <p className="text-gray-400 italic text-xs sm:text-sm">
-                      ICT Department – Calamba City Hall (Nov 2024 – Apr 2025)
-                    </p>
-                    <ul className="mt-2 list-disc ml-4 sm:ml-5 text-gray-300 text-xs sm:text-sm">
-                      <li>
-                        Provided technical support, software installation, and
-                        network maintenance.
-                      </li>
-                      <li>
-                        Assisted in daily IT operations, troubleshooting multiple
-                        technical issues weekly.
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Contact Tab */}
-            {activeTab === "contact" && (
-              <motion.div
-                key="contact"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-              >
-                <span className="text-[#4ec9b0]">
-                  gian@portfolio:~$ cat contact.txt
-                </span>
-                <div className="ml-2 sm:ml-4 mt-2 flex flex-col space-y-2">
-                  <Link
-                    href="https://github.com/yunchan29"
-                    target="_blank"
-                    className="flex items-center space-x-2 hover:text-[#9cdcfe] transition text-xs sm:text-sm"
-                  >
-                    <Github className="h-4 w-4" />
-                    <span>GitHub</span>
-                  </Link>
-                  <Link
-                    href="https://www.linkedin.com/in/gian-mark-vigo-99493b294"
-                    target="_blank"
-                    className="flex items-center space-x-2 hover:text-[#9cdcfe] transition text-xs sm:text-sm"
-                  >
-                    <Linkedin className="h-4 w-4" />
-                    <span>LinkedIn</span>
-                  </Link>
-                  <Link
-                    href="mailto:vigogianmark@gmail.com"
-                    className="flex items-center space-x-2 hover:text-[#9cdcfe] transition text-xs sm:text-sm"
-                  >
-                    <Mail className="h-4 w-4" />
-                    <span>Email</span>
-                  </Link>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </motion.div>
-
-      {/* Modal for Screenshot Preview */}
+      {/* ---------- PORTAL FLASH / SHIMMER ---------- */}
       <AnimatePresence>
-        {isModalOpen && (
+        {portalFlash && (
           <motion.div
+            key="portal"
+            className="absolute inset-0 z-50 bg-white"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-2"
+            transition={{ duration: 0.4 }}
           >
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="relative w-full max-w-3xl bg-[#1e1e1e] border border-white/20 rounded-lg p-3 sm:p-4"
-            >
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="absolute top-2 right-2 sm:top-3 sm:right-3 text-gray-300 hover:text-white"
-              >
-                <X className="h-5 w-5 sm:h-6 sm:w-6" />
-              </button>
-
-              <div className="flex flex-col items-center">
-                <img
-                  src={
-                    projects[projectIndex].images?.[screenshotIndex] ||
-                    "/placeholder.png"
-                  }
-                  alt="Project screenshot"
-                  className="rounded-md max-h-[60vh] sm:max-h-[70vh] object-contain"
-                />
-                <div className="flex justify-between w-full mt-4">
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    whileHover={{ scale: 1.05 }}
-                    onClick={prevScreenshot}
-                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff]"
-                  >
-                    <ChevronLeft />
-                  </motion.button>
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    whileHover={{ scale: 1.05 }}
-                    onClick={nextScreenshot}
-                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#4fc1ff]"
-                  >
-                    <ChevronRight />
-                  </motion.button>
-                </div>
-              </div>
-            </motion.div>
+              className="absolute inset-0 bg-radial from-white via-transparent to-transparent"
+              initial={{ scale: 0, opacity: 0.8 }}
+              animate={{ scale: 3, opacity: 0 }}
+              transition={{ duration: 1 }}
+            />
           </motion.div>
         )}
+      </AnimatePresence>
 
-        {/* Modal for Resume Preview */}
-        {isResumeOpen && (
+      {/* ---------- TERMINAL ---------- */}
+     {/* ---------- TERMINAL ---------- */}
+<AnimatePresence>
+  {terminalVisible && (
+    <motion.div
+      key="terminal"
+      className="fixed top-12 left-1/2 -translate-x-1/2 z-40"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, y: 40 }}
+      transition={{ duration: 0.7 }}
+    >
+      <div className="w-[80vw] md:w-[60vw] bg-[#1a1a1a] rounded-lg shadow-lg pointer-events-auto">
+        <TerminalTop
+          id="terminal"
+          title="gian@portfolio:~$"
+          taskbar={taskbar}
+          setTaskbar={setTaskbar}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          setShowMainWindow={setShowMainWindow}
+          setIsResumeOpen={setIsResumeOpen}
+          onCommandExecuted={handleCommandExecuted}
+        />
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
+      {/* ---------- MINIMIZED TERMINAL ICON ---------- */}
+      {terminalMinimized && (
+        <Draggable>
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-2"
+            className="fixed bottom-6 left-6 z-50 cursor-pointer bg-[#111] text-green-400 px-4 py-2 rounded-md shadow-lg border border-green-500"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              setTerminalVisible(true);
+              setTerminalMinimized(false);
+            }}
           >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="relative w-full max-w-4xl h-[80vh] bg-[#1e1e1e] border border-white/20 rounded-lg p-3 sm:p-4 flex flex-col"
-            >
-              <button
-                onClick={() => setIsResumeOpen(false)}
-                className="absolute top-2 right-2 sm:top-3 sm:right-3 text-gray-300 hover:text-white"
-              >
-                <X className="h-5 w-5 sm:h-6 sm:w-6" />
-              </button>
+            $ terminal
+          </motion.div>
+        </Draggable>
+      )}
 
-              {/* PDF Preview with built-in browser controls */}
-              <iframe
-                src="/Gian_Mark_Vigo_Resume_Latest.pdf#toolbar=1&navpanes=0&scrollbar=1"
-                className="w-full h-full rounded-md"
-                title="Resume Preview"
+      {/* ---------- MAIN WINDOW ---------- */}
+      <AnimatePresence>
+        {showMainWindow && (
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center z-30 pointer-events-auto"
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            <motion.div className="bg-[#2c2c2c] rounded-xl shadow-2xl w-[90%] sm:w-[70%] lg:w-[50%] max-h-[80vh] overflow-auto">
+              <MainWindow
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                projectIndex={projectIndex}
+                setProjectIndex={setProjectIndex}
+                setIsModalOpen={setIsModalOpen}
+                setScreenshotIndex={setScreenshotIndex}
+                setIsResumeOpen={setIsResumeOpen}
               />
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* ---------- MODALS ---------- */}
+      <ProjectModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        projects={projects}
+        projectIndex={projectIndex}
+        screenshotIndex={screenshotIndex}
+        setScreenshotIndex={setScreenshotIndex}
+      />
+      <ResumeModal
+        isResumeOpen={isResumeOpen}
+        setIsResumeOpen={setIsResumeOpen}
+      />
     </main>
   );
-}
+};
+
+export default Home;
