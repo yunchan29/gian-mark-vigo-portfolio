@@ -53,11 +53,15 @@ const MainWindow: React.FC<MainWindowProps> = ({
   return (
     <motion.div
       layout
+      initial={{ opacity: 0, y: 20 }}
       animate={{
+        opacity: 1,
+        y: 0,
         width: isMaximized ? "100%" : "100%",
         height: isMaximized ? "100%" : isMinimized ? "2.5rem" : "28rem",
         borderRadius: isMaximized ? "0px" : "0.75rem",
       }}
+      exit={{ opacity: 0, y: 20 }}
       transition={{ type: "spring", stiffness: 140, damping: 18 }}
       className={`${
         isMaximized
@@ -71,9 +75,6 @@ const MainWindow: React.FC<MainWindowProps> = ({
           "--scrollbar-accent": tabAccentColors[activeTab],
         } as React.CSSProperties
       }
-      initial={{ opacity: 0, y: 20 }}
-   
-      exit={{ opacity: 0, y: 20 }}
     >
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-white/10 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md">
