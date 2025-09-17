@@ -72,7 +72,7 @@ const MainWindow: React.FC<MainWindowProps> = ({
         } as React.CSSProperties
       }
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+   
       exit={{ opacity: 0, y: 20 }}
     >
       {/* Header */}
