@@ -12,20 +12,30 @@ const tabList = ["about", "projects", "experience", "contact"] as const;
 
 export default function Tabs({ activeTab, setActiveTab }: TabsProps) {
   return (
-    <div className="flex items-center overflow-x-auto border-b border-white/20 bg-white/10 backdrop-blur-sm text-xs sm:text-sm">
-      {tabList.map((tab) => (
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          whileHover={{ scale: 1.05, color: "#9cdcfe" }}
-          key={tab}
-          onClick={() => setActiveTab(tab)}
-          className={`px-3 sm:px-4 py-2 whitespace-nowrap ${
-            activeTab === tab ? "bg-white/5 text-[#9cdcfe]" : "text-[#808080]"
-          }`}
-        >
-          {tab}.txt
-        </motion.button>
-      ))}
+    <div className="relative border-b border-white/20 bg-white/5 backdrop-blur-md">
+      <div className="flex items-center overflow-x-auto no-scrollbar text-xs sm:text-sm">
+        {tabList.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`relative px-3 sm:px-4 py-2 whitespace-nowrap transition-colors duration-200 ${
+              activeTab === tab
+                ? "text-sky-300"
+                : "text-white/60 hover:text-white"
+            }`}
+          >
+            {tab}.txt
+            {/* Active underline glow */}
+            {activeTab === tab && (
+              <motion.div
+                layoutId="activeTabUnderline"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-sky-400 to-indigo-400 rounded-full shadow-[0_0_6px_rgba(56,189,248,0.7)]"
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              />
+            )}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

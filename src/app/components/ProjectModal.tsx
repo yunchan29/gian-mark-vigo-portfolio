@@ -1,9 +1,14 @@
- 
-
 "use client";
 
 import React, { useState } from "react";
-import { X, Github, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import {
+  X,
+  Github,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  Code2,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Project {
@@ -12,6 +17,7 @@ interface Project {
   link: string; // GitHub
   site?: string; // live site
   images?: string[];
+  techstack?: string[]; // ✅ new field
 }
 
 interface ProjectModalProps {
@@ -31,7 +37,7 @@ export default function ProjectModal({
   screenshotIndex,
   setScreenshotIndex,
 }: ProjectModalProps) {
-  const [expanded, setExpanded] = useState(false); // moved above conditional ✅
+  const [expanded, setExpanded] = useState(false);
 
   if (!isModalOpen) return null;
 
@@ -50,8 +56,19 @@ export default function ProjectModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6">
-      <div className="bg-[#1e1e1e] p-8 rounded-lg w-[95%] max-w-7xl max-h-[95vh] overflow-auto flex gap-6 relative">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+      <motion.div
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="
+          bg-[#1e1e1e] rounded-t-xl md:rounded-lg
+          w-full h-full md:w-[95%] md:h-auto md:max-h-[95vh]
+          overflow-auto flex flex-col md:flex-row gap-6 relative
+          p-6 sm:p-8
+        "
+      >
         {/* Close button */}
         <button
           onClick={() => setIsModalOpen(false)}
@@ -61,15 +78,20 @@ export default function ProjectModal({
         </button>
 
         {/* Left Column */}
-        <div className="flex-1 flex flex-col justify-start gap-4">
-          <h2 className="text-2xl text-[#dcdcaa] font-bold">{project.title}</h2>
+        <div className="flex-1 flex flex-col justify-start gap-4 mt-6 md:mt-0">
+          <h2 className="text-2xl text-[#dcdcaa] font-bold">
+            {project.title}
+          </h2>
 
-          <div className="text-gray-300 whitespace-pre-line max-h-[250px] overflow-hidden">
+          {/* Description */}
+          <div className="text-gray-300 whitespace-pre-line">
             {expanded
               ? project.description
-              : `${project.description.slice(0, 250)}...`}
+              : `${project.description.slice(0, 200)}${
+                  project.description.length > 200 ? "..." : ""
+                }`}
           </div>
-          {project.description.length > 250 && (
+          {project.description.length > 200 && (
             <button
               onClick={() => setExpanded(!expanded)}
               className="text-[#4ec9b0] hover:underline self-start"
@@ -78,14 +100,33 @@ export default function ProjectModal({
             </button>
           )}
 
+          {/* Tech Stack */}
+          {project.techstack && project.techstack.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold flex items-center gap-2 text-[#4ec9b0] mb-2">
+                <Code2 size={18} /> Tech Stack
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {project.techstack.map((tech, idx) => (
+                  <span
+                    key={idx}
+                    className="bg-gray-800 text-gray-200 text-sm px-3 py-1 rounded-full"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Links */}
-          <div className="flex gap-4 mt-2">
+          <div className="flex flex-wrap gap-4 mt-4">
             {project.link && (
               <a
                 href={project.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-gray-800 px-4 py-2 rounded-lg hover:bg-gray-700 transition"
+                className="flex items-center gap-2 bg-gray-800 px-4 py-2 rounded-lg hover:bg-gray-700 transition text-sm"
               >
                 <Github size={18} /> <span>GitHub</span>
               </a>
@@ -95,7 +136,7 @@ export default function ProjectModal({
                 href={project.site}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-[#4ec9b0] text-black px-4 py-2 rounded-lg hover:bg-[#3ab49d] transition"
+                className="flex items-center gap-2 bg-[#4ec9b0] text-black px-4 py-2 rounded-lg hover:bg-[#3ab49d] transition text-sm"
               >
                 <ExternalLink size={18} /> <span>Live Preview</span>
               </a>
@@ -105,9 +146,9 @@ export default function ProjectModal({
 
         {/* Right Column: Screenshot carousel */}
         {project.images && project.images.length > 0 && (
-          <div className="w-[50%] flex flex-col items-center justify-center relative">
+          <div className="w-full md:w-[50%] flex flex-col items-center justify-center relative">
             <div className="w-full rounded-xl border border-[#3c3c3c] p-4 bg-[#121212] shadow-lg relative">
-              <div className="w-full h-[300px] bg-black rounded-md overflow-hidden relative flex items-center justify-center shadow-inner">
+              <div className="w-full h-[220px] sm:h-[300px] bg-black rounded-md overflow-hidden relative flex items-center justify-center shadow-inner">
                 {/* Reflection overlay */}
                 <div className="absolute top-0 left-0 w-full h-full pointer-events-none bg-gradient-to-b from-white/10 via-white/5 to-transparent rounded-md" />
 
@@ -162,7 +203,7 @@ export default function ProjectModal({
             )}
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }

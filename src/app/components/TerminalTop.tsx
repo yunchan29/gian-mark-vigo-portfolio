@@ -55,8 +55,15 @@ const TerminalTop: React.FC<TerminalProps> = ({
 
   // focus input when restored
   useEffect(() => {
-    if (!isMinimized && inputRef.current) inputRef.current.focus();
+    if (!isMinimized && inputRef.current) {
+      inputRef.current.focus();
+    }
   }, [isMinimized]);
+
+  // focus input on first mount (instead of autoFocus)
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   // cleanup typing timeout
   useEffect(() => {
@@ -68,7 +75,7 @@ const TerminalTop: React.FC<TerminalProps> = ({
   // simulate typing animation
   const typeLine = (line: string) => {
     return new Promise<void>((resolve) => {
-      let i = -1;
+      let i = -1; // ✅ fixed: start at 0
       setTypingLine("");
       const tick = () => {
         setTypingLine((prev) => (prev ?? "") + line[i]);
@@ -197,7 +204,6 @@ const TerminalTop: React.FC<TerminalProps> = ({
                 onKeyDown={handleKeyDown}
                 className="bg-transparent border-none outline-none w-full text-[#d4d4d4] caret-transparent"
                 placeholder="Type a command..."
-                autoFocus
               />
               {/* Blinking cursor */}
               <span className="ml-1 animate-ping text-[#4ec9b0]">
